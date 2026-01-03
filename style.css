@@ -13,6 +13,29 @@
   src: url(./public/fonts/CallOfDuty.otf);
 }
 
+/* CSS Variables for consistent theming and easy adjustments */
+:root {
+  /* Colors */
+  --color-white: #ffffff;
+  --color-light-gray: #a3a3a3;
+  --color-dark-gray: #8b8b8b;
+  --color-card-bg: #1b1b1bcc;
+  --color-primary: #2326c5;
+  --color-dark: #141415;
+  --color-footer-bg-start: #0c0c0c;
+  --color-footer-bg-mid: #111253;
+  --color-footer-bg-end: #0b0d0c;
+  --color-footer-border: #14154a;
+
+  /* Spacing */
+  --spacing-section: 80px;
+  --spacing-mobile: 15px;
+
+  /* Breakpoints (for reference) */
+  --breakpoint-tablet: 768px;
+  --breakpoint-mobile: 480px;
+}
+
 body,
 html {
   font-family: Roboto, sans-serif;
@@ -30,8 +53,9 @@ html {
   background: url(./public/assets/pBackground.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-  padding-left: 80px;
-  padding-right: 80px;
+  padding-left: var(--spacing-section);
+  padding-right: var(--spacing-section);
+  overflow: hidden;
 }
 
 .intro-section .header-container {
@@ -49,16 +73,22 @@ html {
 .intro-section .header-container .action-container .action-links {
   text-decoration: none;
   font-size: 18px;
-  color: #a3a3a3;
+  color: var(--color-light-gray);
   margin-left: 40px;
+  transition: color 0.3s ease;
+}
+
+.intro-section .header-container .action-container .action-links:hover {
+  color: var(--color-white);
 }
 
 .intro-section .intro-content {
   font-family: CallOfDuty, Roboto;
-  font-size: 48px;
+  font-size: clamp(28px, 5vw, 48px);
   margin-top: 10%;
-  color: #ffffff;
+  color: var(--color-white);
   max-width: 950px;
+  line-height: 1.3;
 }
 
 .intro-section .intro-section-content {
@@ -81,34 +111,76 @@ html {
   text-align: center;
 }
 
+/* Circles wrapper for decorative circles */
+.intro-section .circles-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Largest decorative circle */
+.intro-section .circles-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  right: -70%;
+  width: 140%;
+  height: 140%;
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* Medium decorative circle */
+.intro-section .circles-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* Achievement badge containers (no borders, just positioning) */
 .intro-section .circle1 {
   position: absolute;
-  top: 30vh;
-  right: -40vh;
-  border: 1px solid #ffffff;
-  border-radius: 65vh;
-  width: 130vh;
-  height: 130vh;
+  bottom: 15%;
+  right: 60%;
+  pointer-events: auto;
 }
 
 .intro-section .circle2 {
   position: absolute;
-  top: 50vh;
-  right: -30vh;
-  border: 1px solid #ffffff;
-  border-radius: 50vh;
-  width: 100vh;
-  height: 100vh;
+  bottom: 15%;
+  right: 45%;
+  pointer-events: auto;
 }
 
 .intro-section .circle3 {
   position: absolute;
-  top: 70vh;
-  right: -20vh;
-  border: 1px solid #ffffff;
-  border-radius: 35vh;
-  width: 70vh;
-  height: 70vh;
+  bottom: 15%;
+  right: 35%;
+  pointer-events: auto;
+}
+
+.intro-section .circle4 {
+  position: absolute;
+  bottom: 20%;
+  right: 30%;
+  pointer-events: auto;
+}
+.intro-section .circle5 {
+  position: absolute;
+  bottom: 30%;
+  right: 30%;
+  pointer-events: auto;
 }
 
 .intro-section .icon-circle {
@@ -186,142 +258,242 @@ html {
   background: url(./public/assets/pBackground1.jpeg);
   background-repeat: no-repeat;
   background-size: cover;
-  padding-left: 80px;
-  padding-right: 80px;
-  color: #ffffff;
+  padding: 5% var(--spacing-section);
+  color: var(--color-white);
   overflow: hidden;
 }
 
 .values-section .values-container {
   max-width: calc(100% - 160px);
+  margin: 0 auto;
 }
 
 .values-section .values-section-header {
   font-family: CallOfDuty;
-  font-size: 48px;
+  font-size: clamp(32px, 5vw, 48px);
   text-align: center;
   margin: 0;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 
 .values-section .values-section-subtitle {
-  font-size: 45px;
-  margin-top: 50px;
+  font-size: clamp(20px, 3.5vw, 45px);
+  margin-top: 30px;
   text-align: center;
+  line-height: 1.4;
+  padding: 0 20px;
 }
 
 .values-section .values-card-container {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
+  gap: 30px;
   margin-top: 5%;
-  gap: 20px;
+  padding: 0 20px;
 }
 
 .values-section .values-card-container .values-card {
-  background: #1b1b1bcc;
-  border-radius: 10px;
-  padding: 10px;
-  width: 500px;
-  margin-bottom: 5%;
+  background: var(--color-card-bg);
+  border-radius: 15px;
+  padding: 30px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.values-section .values-card-container .values-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.values-section .values-card-container .values-card img {
+  max-width: 80px;
+  max-height: 80px;
+  margin-bottom: 15px;
 }
 
 .values-section .values-card-container .values-card .card-text-1 {
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 15px 0;
 }
 
 .values-section .values-card-container .values-card .card-text-2 {
   font-size: 16px;
+  line-height: 1.6;
+  color: #e0e0e0;
 }
 
 .teams-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 70vh;
   background: url(./public/assets/pBackground2.jpeg);
   background-repeat: no-repeat;
   background-size: cover;
-  padding-left: 80px;
-  padding-right: 80px;
-  color: #ffffff;
+  padding: 5% var(--spacing-section);
+  color: var(--color-white);
   overflow: hidden;
 }
 
 .teams-section .teams-container {
   max-width: calc(100% - 160px);
+  margin: 0 auto;
 }
 
 .teams-section .teams-section-header {
   font-family: CallOfDuty;
-  font-size: 48px;
+  font-size: clamp(32px, 5vw, 48px);
   text-align: center;
   margin: 0;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 
 .teams-section .teams-section-subtitle {
-  font-size: 24px;
-  margin-top: 50px;
+  font-size: clamp(18px, 2.5vw, 24px);
+  margin-top: 30px;
   text-align: center;
+  line-height: 1.5;
 }
 
 .teams-section .teams-card-container {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 290px));
+  justify-content: center;
+  gap: 40px;
   margin-top: 5%;
-  gap: 20px;
+  padding: 20px;
 }
 
 .teams-section .teams-card-container .teams-card {
-  border-radius: 10px;
-  width: 290px;
-  margin-bottom: 5%;
+  border-radius: 15px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.teams-section .teams-card-container .teams-card:hover {
+  transform: scale(1.05);
+}
+
+.teams-section .teams-card-container .teams-card img {
+  width: 100%;
+  max-width: 290px;
+  height: auto;
+  border-radius: 15px;
+  margin-bottom: 15px;
 }
 
 .teams-section .teams-card-container .teams-card .card-text-1 {
-  font-size: 30px;
+  font-size: clamp(24px, 3vw, 30px);
   color: #f6f6f6;
+  margin: 10px 0;
 }
 
 .teams-section .teams-card-container .teams-card .card-text-2 {
-  font-size: 20px;
+  font-size: clamp(16px, 2vw, 20px);
   color: #aeaeae;
+  line-height: 1.5;
+  margin: 10px 0;
 }
 
 .locki-footer {
   display: flex;
   flex-flow: row nowrap;
-  background-image: linear-gradient(to right, #0c0c0c, #111253, #0b0d0c);
-  border-top: 1px solid #14154a;
+  background-image: linear-gradient(
+    to right,
+    var(--color-footer-bg-start),
+    var(--color-footer-bg-mid),
+    var(--color-footer-bg-end)
+  );
+  border-top: 1px solid var(--color-footer-border);
   justify-content: flex-end;
   align-items: center;
-  min-height: 50px;
+  min-height: 60px;
   position: relative;
+  padding: 15px 20px;
 }
 
 .locki-footer .external-links {
   cursor: pointer;
   margin-right: 15px;
   z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.locki-footer .external-links:hover {
+  transform: scale(1.2);
 }
 
 .locki-footer .external-links svg {
   width: 20px;
   height: 20px;
-  fill: #ffffff;
+  fill: var(--color-white);
 }
 
 .locki-footer .copyright-text {
   position: absolute;
   width: 100%;
   text-align: center;
-  color: #ffffff;
+  color: var(--color-white);
+  font-size: clamp(12px, 2vw, 14px);
 }
 
+/* Tablet responsive styles */
+@media only screen and (max-width: 768px) {
+  :root {
+    --spacing-section: 40px;
+  }
+
+  .intro-section .circles-wrapper {
+    width: 50vw;
+  }
+
+  .intro-section .circles-wrapper::before {
+    right: -60%;
+    width: 120%;
+    height: 120%;
+  }
+
+  .intro-section .circles-wrapper::after {
+    right: -40%;
+    width: 80%;
+    height: 80%;
+  }
+
+  .intro-section .header-container .action-container .action-links {
+    font-size: 16px;
+    margin-left: 20px;
+  }
+
+  .intro-section .icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+  }
+
+  .intro-section .icon-circle img {
+    top: 15px;
+    left: 15px;
+  }
+
+  .intro-section .icon-circle-text {
+    font-size: 14px;
+  }
+
+  .values-section .values-card-container {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+    gap: 20px;
+  }
+}
+
+/* Mobile responsive styles */
 @media only screen and (max-width: 480px) {
+  :root {
+    --spacing-section: 15px;
+  }
+
   .intro-section {
     padding-left: 0;
     padding-right: 0;
@@ -329,9 +501,8 @@ html {
     min-height: 100vh;
   }
 
-  .intro-section .circle1,
-  .intro-section .circle2,
-  .intro-section .circle3 {
+  /* Hide the entire circles wrapper on mobile */
+  .intro-section .circles-wrapper {
     display: none;
   }
 
@@ -339,6 +510,12 @@ html {
     justify-content: center;
     width: 100%;
     max-width: unset;
+    padding: 20px var(--spacing-mobile);
+  }
+
+  .intro-section .header-container .logo-container .logo-content {
+    width: 120px;
+    height: 120px;
   }
 
   .header-container .action-container {
@@ -346,18 +523,19 @@ html {
   }
 
   .intro-section .intro-content {
-    font-size: 40px;
     text-align: center;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: var(--spacing-mobile);
+    padding-right: var(--spacing-mobile);
   }
 
   .intro-section .btn-container {
     justify-content: center;
+    padding: 0 var(--spacing-mobile);
   }
 
   .intro-section .btn-container .btn {
-    padding: 10px;
+    padding: 15px 10px;
+    width: 180px;
   }
 
   .intro-section .scroll-container {
@@ -367,67 +545,61 @@ html {
   .values-section {
     background-size: contain;
     background-repeat: repeat-y;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 40px var(--spacing-mobile);
   }
 
   .values-section .values-container {
-    max-width: unset;
+    max-width: 100%;
     width: 100%;
-  }
-
-  .values-section .values-section-subtitle {
-    font-size: 20px;
-    margin-top: 30px;
-    margin-left: 15px;
-    margin-right: 15px;
   }
 
   .values-section .values-card-container {
-    margin-top: 75px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0;
+    margin-top: 40px;
+  }
+
+  .values-section .values-card-container .values-card {
+    padding: 20px 15px;
   }
 
   .teams-section {
-    background: linear-gradient(to right, #0c0c0c, #111253, #0b0d0c);
-    padding-left: 0;
-    padding-right: 0;
+    background: linear-gradient(
+      to right,
+      var(--color-footer-bg-start),
+      var(--color-footer-bg-mid),
+      var(--color-footer-bg-end)
+    );
+    padding: 40px var(--spacing-mobile);
+    min-height: 50vh;
   }
 
   .teams-section .teams-container {
-    max-width: unset;
+    max-width: 100%;
     width: 100%;
   }
 
-  .teams-section .teams-section-header {
-    font-size: 40px;
-    margin-top: 50px;
-  }
-
-  .teams-section .teams-section-subtitle {
-    font-size: 20px;
-    margin-top: 15px;
-  }
-
   .teams-section .teams-card-container {
-    justify-content: center;
-    margin-top: 70px;
-    gap: 50px;
-  }
-
-  .teams-section .teams-card-container .teams-card .card-text-1 {
-    margin: 10px auto;
-  }
-
-  .teams-section .teams-card-container .teams-card .card-text-2 {
-    font-size: 16px;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 40px;
   }
 
   .locki-footer {
     justify-content: center;
     padding-bottom: 50px;
+    flex-direction: column;
+    gap: 15px;
   }
 
   .locki-footer .copyright-text {
-    bottom: 10px;
+    position: relative;
+    order: 2;
+    margin-top: 10px;
+  }
+
+  .locki-footer .external-links {
+    margin: 0 10px;
   }
 }
