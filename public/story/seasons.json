@@ -1,5 +1,5 @@
 {
-  "source": "docs.locki.io — src/pages/index.js SEASONS[] (the airlock, read 2026-08-29); accents are the docs' own",
+  "source": "docs.locki.io — src/pages/index.js SEASONS[] (the airlock, read 2026-08-29); accents are the docs' own; Season 0 date corrected to October 2023 (operator, 2026-08-29)",
   "rule": "the tori wear the current season's accent; the cube keeps the tesseract's blue in every season — the seed is the invariant, the surface is the weather",
   "current": "ragnarok",
   "seed": "#1b2bff",
@@ -8,10 +8,11 @@
       "id": "multiversx",
       "label": "Season 0",
       "name": "MultiversX Hackathon",
-      "date": "2024",
+      "date": "October 2023",
       "accent": "#6c5ce7",
       "emoji": "🌱",
-      "memory": "4th place. The conviction that AI could serve citizens without betraying them. The seed planted."
+      "memory": "4th place. The conviction that AI could serve citizens without betraying them. The seed planted.",
+      "note": "the landing page says 2024 — corrected here per the operator and locki3d/encode-multiversx-2023.md; vaettir issue opened 2026-08-29"
     },
     {
       "id": "itheum",
