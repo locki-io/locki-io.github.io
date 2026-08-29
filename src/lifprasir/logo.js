@@ -18,7 +18,7 @@ import * as THREE from 'three';
 import { createDirector } from './director.js';
 
 const R = 1.6, r = 0.5;                 // major and minor radii, both tori
-const NECK = R;                         // centres R apart: each centre-line passes through the other ring's centre — the vesica (operator: "same move, R not 2R")
+const DIST = R;                         // default distance between the two centres (operator: R); live-adjustable — setDistance(d)
 const CUBE = 2 * r * 0.92;              // the subtracted cube: the tube's diameter, almost
 const GAP = (CUBE * 1.25) / R;          // the arc the cube took out of the C (radians)
 const JOIN = 0.22;                      // radians: the spark blends from one circle to the other over this window at the neck
@@ -28,7 +28,7 @@ const LAP_SECONDS = 6.0;                // seconds for the spark to run both cir
 const ease = (s) => s * s * (3 - 2 * s);
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0 } = {}) {
+export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0, distance = DIST, onDistance } = {}) {
   if (!container) return { dispose() {} };
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
@@ -46,7 +46,13 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const rim = new THREE.DirectionalLight(0xff5a4a, 0.5); rim.position.set(6, -4, -6); scene.add(rim);
 
   // --- the two tori: the logo, red ----------------------------------------------
-  const A = new THREE.Vector3(-(R - NECK / 2), 0, 0), B = new THREE.Vector3(R - NECK / 2, 0, 0);
+  const A = new THREE.Vector3(), B = new THREE.Vector3();
+  let dist = distance;
+  function setDistance(d) {                                               // the operator's hand on the distance between the centres
+    dist = Math.max(0, d); A.set(-dist / 2, 0, 0); B.set(dist / 2, 0, 0);
+    O.position.copy(A); C.position.copy(B); cubeGroup.position.set(B.x + R, 0, 0);
+    onDistance && onDistance(dist, dist / R, dist / r);
+  }
   const mat = new THREE.MeshStandardMaterial({ color: 0xff2a3a, emissive: 0x7a0f18, emissiveIntensity: 0.45, roughness: 0.4, metalness: 0.05 });
   const O = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140), mat); O.position.copy(A); scene.add(O);
   const C = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140, Math.PI * 2 - GAP), mat); C.position.copy(B); scene.add(C);
@@ -59,7 +65,8 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const cubeMat = new THREE.LineBasicMaterial({ color: 0x8fc6ff, transparent: true, opacity: 0.95 });
   const cube = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE, CUBE, CUBE)), cubeMat);
   const inner = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * 0.5, CUBE * 0.5, CUBE * 0.5)), cubeMat.clone());
-  const cubeGroup = new THREE.Group(); cubeGroup.add(cube, inner); cubeGroup.position.set(B.x + R, 0, 0); scene.add(cubeGroup);
+  const cubeGroup = new THREE.Group(); cubeGroup.add(cube, inner); scene.add(cubeGroup);
+  setDistance(dist);
 
   // --- the flow: a spark on the two circles ----------------------------------------
   // f ∈ [0,1): the O from the neck, counter-clockwise; then the C from the neck, clockwise. The neck is an S over ±JOIN.
@@ -88,7 +95,11 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   // --- the human in the loop ----------------------------------------------------------
   let stopped = false, closeWanted = false, closeAt = null, closed = false, t0 = null;
   function closeLoop() { if (!stopped || closeWanted) return; closeWanted = true; onClose && onClose(); }
-  function onGesture(e) { if (dir.active && e.type === 'keydown' && /^[keKE]$/.test(e.key)) return; closeLoop(); }
+  function onGesture(e) {
+    if (e.type === 'keydown' && (/^[+=\-_\[\]]$/.test(e.key) || (dir.active && /^[keKE]$/.test(e.key)))) return;   // the distance keys and the director's keys are not a hand on the loop
+    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.knob')) return;                  // nor is the slider
+    closeLoop();
+  }
   function resize() { const w = container.clientWidth, h = container.clientHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
   window.addEventListener('resize', resize);
 
@@ -123,5 +134,5 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   }
   raf = requestAnimationFrame(frame);
 
-  return { closeLoop, dispose() { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); window.removeEventListener('keydown', onGesture); window.removeEventListener('pointerdown', onGesture); dir.dispose(); renderer.dispose(); renderer.domElement.remove(); } };
+  return { closeLoop, setDistance, get distance() { return dist; }, R, r, dispose() { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); window.removeEventListener('keydown', onGesture); window.removeEventListener('pointerdown', onGesture); dir.dispose(); renderer.dispose(); renderer.domElement.remove(); } };
 }
