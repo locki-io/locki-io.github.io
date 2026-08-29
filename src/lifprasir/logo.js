@@ -35,25 +35,41 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v));
 // O: angle a from 0 (the neck) counter-clockwise, rising from −H to +H in the first quarter, then over the top.
 // C: angle b from π (the neck) clockwise, falling from +H to −H in the first quarter, then under.
 // The two neck crossings are at +H and −H: no intersection.
+const JOIN = 0.22;                      // radians: the window over which one circle blends into the other at the neck
+function onO(A, a) {                    // a point of the O leg, angle a from the neck, counter-clockwise; z rises −H → +H in the first quarter
+  const rise = ease(clamp01(a / (Math.PI / 2)));
+  return new THREE.Vector3(A.x + R * Math.cos(a), A.y + R * Math.sin(a), -H + 2 * H * rise);
+}
+function onC(B, k) {                    // a point of the C leg, k from the neck, clockwise; z falls +H → −H; near the gap it climbs onto the rim
+  const b = Math.PI - k;
+  const fall = ease(clamp01(k / (Math.PI / 2)));
+  const m = ease(clamp01(1 - Math.abs(k - Math.PI) / (Math.PI / 2)));
+  const under = H - 2 * H * fall;
+  return new THREE.Vector3(B.x + (R + H * m) * Math.cos(b), B.y + (R + H * m) * Math.sin(b), under * (1 - m));
+}
 function infinityPoints(A, B, samples = 240) {
+  // The two circles are NECK apart along x at the neck: joined by a step, the thread would jog.
+  // So each junction is an S: over ±JOIN the point blends from one circle to the other.
   const pts = [];
-  const rise = (k) => ease(clamp01(k / (Math.PI / 2)));
-  for (let i = 0; i < samples; i++) {                       // the O, over the top
+  for (let i = 0; i < samples; i++) {
     const a = (i / samples) * Math.PI * 2;
-    pts.push(new THREE.Vector3(A.x + R * Math.cos(a), A.y + R * Math.sin(a), -H + 2 * H * rise(a)));
+    if (a < JOIN) {                     // arriving from the C (its end, k = 2π − JOIN … 2π) onto the O
+      const tau = a / JOIN, w = ease(tau);
+      pts.push(onC(B, Math.PI * 2 - JOIN + a).lerp(onO(A, a), w));
+    } else if (a > Math.PI * 2 - JOIN) {// leaving the O for the C (its start, k = 0 … JOIN)
+      const tau = (a - (Math.PI * 2 - JOIN)) / JOIN, w = ease(tau);
+      pts.push(onO(A, a).lerp(onC(B, a - (Math.PI * 2 - JOIN)), w));
+    } else pts.push(onO(A, a));
   }
-  for (let i = 0; i < samples; i++) {                       // the C, under, clockwise
-    const b = Math.PI - (i / samples) * Math.PI * 2;
+  for (let i = 0; i < samples; i++) {
     const k = (i / samples) * Math.PI * 2;
-    // near the gap (k = π) the thread climbs from under the tube onto its outer rim — into the open, where it will stop
-    const m = ease(clamp01(1 - Math.abs(k - Math.PI) / (Math.PI / 2)));
-    const under = H - 2 * H * rise(k);
-    pts.push(new THREE.Vector3(B.x + (R + H * m) * Math.cos(b), B.y + (R + H * m) * Math.sin(b), under * (1 - m)));
+    if (k < JOIN || k > Math.PI * 2 - JOIN) continue;   // the junctions were drawn with the O
+    pts.push(onC(B, k));
   }
   return pts;
 }
 
-export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0 } = {}) {
+export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0, showTori = true, fat = 0, grow = 0 } = {}) {
   if (!container) return { dispose() {} };
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
@@ -74,8 +90,8 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const A = new THREE.Vector3(-(R - NECK / 2), 0, 0), B = new THREE.Vector3(R - NECK / 2, 0, 0);
   const torusMat = new THREE.MeshPhysicalMaterial({ color: 0x1b2bff, emissive: 0x0a12a0, emissiveIntensity: 0.5, roughness: 0.35, metalness: 0.1,
     transparent: true, opacity: 0.36, side: THREE.DoubleSide, depthWrite: false });   // glass enough to see the thread pass behind the C
-  const O = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140), torusMat); O.position.copy(A); scene.add(O);
-  const C = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140, Math.PI * 2 - GAP), torusMat.clone()); C.position.copy(B); scene.add(C);
+  const O = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140), torusMat); O.position.copy(A); scene.add(O); O.visible = showTori;
+  const C = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140, Math.PI * 2 - GAP), torusMat.clone()); C.position.copy(B); scene.add(C); C.visible = showTori;
   // the arc of a TorusGeometry starts at angle 0 (+x); centre the gap on +x — the far end from the O
   C.rotation.z = GAP / 2;
   function setGap(g) {                                       // rebuild the C for a new gap (cheap: 28 × 140)
@@ -94,7 +110,8 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const pts = infinityPoints(A, B);
   const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
   const TUB = 480, RAD = 10;
-  const tubeGeo = new THREE.TubeGeometry(curve, TUB, THREAD_R, RAD, true);
+  let threadR = fat > 0 && !grow ? fat : THREAD_R;   // fat: the thread's own tube, big enough for its lobes to touch — the thread as the logo
+  let tubeGeo = new THREE.TubeGeometry(curve, TUB, threadR, RAD, true);
   const coreMat = new THREE.MeshBasicMaterial({ color: 0xff2a3a });
   const thread = new THREE.Mesh(tubeGeo, coreMat); scene.add(thread);
   const halo = new THREE.Mesh(new THREE.TubeGeometry(curve, TUB, THREAD_R * 3.2, RAD, true),
@@ -104,9 +121,16 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const GAP_AT = (() => { const e = new THREE.Vector3(B.x + (R + H) * Math.cos(GAP / 2), B.y + (R + H) * Math.sin(GAP / 2), 0); let best = 1e9, bu = 0.72;
     for (let u = 0.55; u < 0.95; u += 0.0005) { const d = curve.getPointAt(u).distanceTo(e); if (d < best) { best = d; bu = u; } } return bu; })();
   const perSeg = tubeGeo.index.count / TUB;
+  let drawn = 0;
   function drawTo(f) {                                       // the thread exists only as far as it has run
-    const n = Math.floor(clamp01(f) * TUB) * perSeg;
+    drawn = f; const n = Math.floor(clamp01(f) * TUB) * perSeg;
     thread.geometry.setDrawRange(0, n); halo.geometry.setDrawRange(0, n);
+  }
+  function setThreadRadius(rr) {                              // grow: the thread fattens until its lobes touch
+    if (Math.abs(rr - threadR) < 1e-4) return; threadR = rr;
+    thread.geometry.dispose(); thread.geometry = new THREE.TubeGeometry(curve, TUB, rr, RAD, true);
+    halo.geometry.dispose(); halo.geometry = new THREE.TubeGeometry(curve, TUB, rr * (rr > 0.2 ? 1.25 : 3.2), RAD, true);
+    drawTo(drawn);
   }
   drawTo(0);
   const spark = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xffb8a8, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
@@ -155,6 +179,11 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
       f = gone < CLOSE_SECONDS ? GAP_AT : ((GAP_AT + (gone - CLOSE_SECONDS) / SPARK_PERIOD) % 1);
       drawTo(gone < CLOSE_SECONDS ? GAP_AT : (gone - CLOSE_SECONDS) / SPARK_PERIOD >= 1 - GAP_AT ? 1 : GAP_AT + (gone - CLOSE_SECONDS) / SPARK_PERIOD);
       if (!closed && (gone - CLOSE_SECONDS) / SPARK_PERIOD >= 1 - GAP_AT) { closed = true; drawTo(1); onClosed && onClosed(); }
+    }
+    if (grow > 0 && fat > 0) {                              // the tori fade as the thread takes their place
+      const g = ease(clamp01(t / grow));
+      setThreadRadius(THREAD_R + (fat - THREAD_R) * g);
+      O.material.opacity = C.material.opacity = 0.36 * (1 - g); O.visible = C.visible = showTori && g < 1;
     }
     spark.position.copy(curve.getPointAt(f));
     spark.material.opacity = 0.6 + 0.4 * Math.sin(now * 2 * Math.PI);   // 60 BPM
