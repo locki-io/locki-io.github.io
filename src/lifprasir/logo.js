@@ -18,7 +18,7 @@ import * as THREE from 'three';
 import { createDirector } from './director.js';
 
 const R = 1.6, r = 0.5;                 // major and minor radii, both tori
-const NECK = 0.75 * r;                  // how far the tori overlap: the neck of the connected sum
+const NECK = 2 * r;                     // the tori overlap by one tube diameter: their cross-sections coincide in the middle (centres 2R apart)
 const CUBE = 2 * r * 0.92;              // the subtracted cube: the tube's diameter, almost
 const GAP = (CUBE * 1.25) / R;          // the arc the cube took out of the C (radians)
 const JOIN = 0.22;                      // radians: the spark blends from one circle to the other over this window at the neck
