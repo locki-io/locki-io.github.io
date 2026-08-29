@@ -7,7 +7,7 @@ domain: github-pages-homepage, threejs-fractal-tree, realm-public-airlock
 # tracker = the agent PM / IP-trail surface (issues, wiki, three-axis labels).
 tracker:
   type: forgejo
-  url: https://forge.lockilabs.com/jnxmas/locki-io
+  url: https://forge.lockilabs.com/lockilabs/locki-io
   api_auth_env: LIFPRASIR_FORGE_TOKEN   # per-agent voices: NIOVE_FORGE_TOKEN etc.
   visibility: private
 # deploy_origin = the code-of-record + Pages deploy surface (proposed schema
