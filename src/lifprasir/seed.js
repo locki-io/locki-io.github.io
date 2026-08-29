@@ -22,6 +22,13 @@ const BREATH_PERIOD = 50 / 24;  // one baked breath: 50 frames at Blender's 24 f
 const COLLAPSE_SECONDS = 1.8;
 const BIRTH_SECONDS = 6.0;      // slowly
 const THREAD_HEIGHT = 60;       // far past the top of the frame — it goes to the tree
+const FLOOR_Y = 0.9;            // the ground: just above the radiating orb
+const GRASS_START = 22.5;       // when the camera has risen above — the grass comes out of the floor
+const GRASS_SECONDS = 3.5;
+const GRASS_COUNT = 700;
+
+// Deterministic, like the tree: the same field of grass every time. No Math.random.
+function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
 export function initSeed(container, {
   stream = [], onBeat, onCollapse, onBirth,
@@ -149,6 +156,67 @@ export function initSeed(container, {
   thread.scale.y = 0.0001; // unborn
   scene.add(thread);
 
+  // --- the floor, the pin, and Leaves of Grass ---------------------------------
+  // The ground is a dark, slightly translucent plane just above the orb: its
+  // radiance seeps through. Where the thread pierces it, a pin — the few intense
+  // pixels seen from above. Around it, transparent grass rises from the floor.
+  // "I bequeath myself to the dirt to grow from the grass I love."
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 60),
+    new THREE.MeshBasicMaterial({ color: 0x07070c, transparent: true, opacity: 0.82 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = FLOOR_Y;
+  floor.visible = false;
+  scene.add(floor);
+
+  const pin = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowMap, color: 0xff3344, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  pin.scale.set(0.28, 0.28, 1);
+  pin.position.set(0, FLOOR_Y + 0.02, 0);
+  pin.visible = false;
+  scene.add(pin);
+
+  // one blade: a tapered strip, bent forward, its base at the origin
+  const bladeGeo = new THREE.PlaneGeometry(0.05, 1, 1, 5);
+  { const pos = bladeGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i) + 0.5;                    // 0 (base) .. 1 (tip)
+      pos.setX(i, pos.getX(i) * (1 - y * 0.85));      // taper to the tip
+      pos.setZ(i, y * y * 0.35);                      // bend
+      pos.setY(i, y);
+    }
+    bladeGeo.computeVertexNormals(); }
+  const grassMat = new THREE.MeshBasicMaterial({
+    color: 0xbfffd0, transparent: true, opacity: 0.32, side: THREE.DoubleSide, depthWrite: false,
+  });
+  const grass = new THREE.InstancedMesh(bladeGeo, grassMat, GRASS_COUNT);
+  grass.visible = false;
+  scene.add(grass);
+  const bladeSeed = [];
+  for (let i = 0; i < GRASS_COUNT; i++) {
+    const r = 0.5 + hash(i * 3 + 1) * 6.5;          // never inside the thread
+    const a = hash(i * 3 + 2) * Math.PI * 2;
+    bladeSeed.push({ x: Math.cos(a) * r, z: Math.sin(a) * r, yaw: hash(i * 3 + 3) * Math.PI * 2,
+                     h: 0.5 + hash(i * 7 + 5) * 1.3, phase: hash(i * 11 + 9) * Math.PI * 2 });
+  }
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e3 = new THREE.Euler(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3();
+  function growGrass(g, t) {
+    for (let i = 0; i < GRASS_COUNT; i++) {
+      const b = bladeSeed[i];
+      const gi = Math.max(0, Math.min(1, (g - hash(i) * 0.6) / 0.4)); // each blade on its own beat
+      e3.set(0, b.yaw, Math.sin(t * 1.3 + b.phase) * 0.12 * gi);       // sway
+      q.setFromEuler(e3);
+      v3.set(b.x, FLOOR_Y, b.z);
+      s3.set(1, Math.max(0.0001, b.h * gi), 1);
+      m4.compose(v3, q, s3);
+      grass.setMatrixAt(i, m4);
+    }
+    grass.instanceMatrix.needsUpdate = true;
+  }
+
   const spark = new THREE.Sprite(new THREE.SpriteMaterial({
     map: glowMap, color: 0xffb8a8, transparent: true,
     blending: THREE.AdditiveBlending, depthWrite: false,
@@ -203,13 +271,20 @@ export function initSeed(container, {
       const b = easeOut(Math.min(1, (u - BIRTH_START) / BIRTH_SECONDS));
       thread.scale.y = Math.max(0.0001, b);
       coreMat.opacity = Math.min(1, b * 1.6);
-      haloMat.opacity = 0.08 + 0.3 * b + 0.06 * Math.sin(u * 2.2) * b;
+      haloMat.opacity = 0.08 + 0.3 * b + 0.06 * Math.sin(u * 2 * Math.PI) * b; // the thread at rest: one beat per second (forge #3)
       glow.scale.setScalar(3.8 - 2.2 * b); // the flare settles into the thread's root
       if (b >= 1) { // the spark rides the thread upward, endlessly
         spark.visible = true;
         const s = ((u - BIRTH_START - BIRTH_SECONDS) % 2.4) / 2.4;
         spark.position.set(0, s * 14, 0);
         spark.material.opacity = 1 - s;
+      }
+      // Movement 4 — from above: the floor, the pin, and the grass coming out of it.
+      if (u >= GRASS_START - 1.0) {
+        floor.visible = true; pin.visible = true; grass.visible = true;
+        const g = easeOut(Math.max(0, Math.min(1, (u - GRASS_START) / GRASS_SECONDS)));
+        growGrass(g, u);
+        pin.material.opacity = Math.min(1, (u - (GRASS_START - 1.0)));
       }
     }
   }
@@ -230,6 +305,8 @@ export function initSeed(container, {
     // one honest still: the thread already born, every line of the stream shown
     stream.forEach((line, i) => onBeat && onBeat(i, line));
     root.visible = false; thread.scale.y = 1; coreMat.opacity = 1; haloMat.opacity = 0.3;
+    floor.visible = true; pin.visible = true; grass.visible = true; growGrass(1, 0);
+    if (cameraPath && cameraPath.length) setCam(cameraPath[cameraPath.length - 1]);
     renderer.render(scene, camera);
   } else {
     frame();
