@@ -1,0 +1,100 @@
+{
+  "act": "0",
+  "title": "void → 0",
+  "rule": "every line a quote; source: and consent: travel with it. Books in chronological order of the operator's anchor year — the poet first, then the giants whose shoulders were climbed. A missing cover gets a dark cover with the title in light.",
+  "books": [
+    {
+      "id": "whitman",
+      "author": "Walt Whitman",
+      "title": "Leaves of Grass",
+      "edition": "Feuilles d'herbe, 1855",
+      "cover": "/assets/books/whitman.jpg",
+      "year": 1855,
+      "anchor": "1855 — Leaves of Grass. We need poets first.",
+      "source": "Song of Myself and the Preface, Leaves of Grass (1855) — public domain; read from the Feuilles d'herbe edition (trad. Éric Athenot) on the operator's shelf",
+      "consent": "public domain",
+      "note": "jnxmas, 2026-08-29: and this works for any western country, still now.",
+      "lines": [
+        "I celebrate myself, and what I assume you shall assume,",
+        "For every atom belonging to me as good belongs to you.",
+        "America does not repel the past or what it has produced under its forms…",
+        "accepts the lesson with calmness…",
+        "I am large, I contain multitudes."
+      ]
+    },
+    {
+      "id": "gutteridge",
+      "author": "Lance Gutteridge",
+      "title": "Avoiding IT Disasters",
+      "edition": "the dedication",
+      "cover": "/assets/books/gutteridge.jpg",
+      "year": 1970,
+      "anchor": "1970 — the first reference in the book: where enterprise systems start failing.",
+      "source": "Avoiding IT Disasters — cover subtitle and dedication, first page, transcribed from the physical book by jnxmas, 2026-08-29",
+      "consent": "fair quotation, attributed",
+      "lines": [
+        "Fallacies about enterprise systems, and how you can rise above them.",
+        "I dedicate this book to all the people who have been harmed by enterprise software systems;",
+        "you deserve better."
+      ]
+    },
+    {
+      "id": "goldratt",
+      "author": "Eliyahu M. Goldratt",
+      "title": "Le But",
+      "edition": "AFNOR éd. spéciale",
+      "cover": "/assets/books/goldratt.jpg",
+      "year": 2013,
+      "anchor": "2013 — the AFNOR edition; the facts follow the industrial revolution: Toyota, Hitachi — the 1970s, 80s, 90s.",
+      "source": "The Goal (Goldratt & Cox, 1984), short attributed quotations; prologue to « Debout sur les épaules des géants », Le But, AFNOR édition spéciale — transcribed from the physical book by jnxmas, 2026-08-29",
+      "consent": "fair quotation, attributed",
+      "lines": [
+        "An hour lost at a bottleneck is an hour lost for the entire system.",
+        "Tell me how you measure me, and I will tell you how I will behave.",
+        "La bonne définition d'un but est celle qui nous met sur le chemin de l'amélioration continue.",
+        "Pour atteindre un tel but, une percée décisive ne suffit pas. En fait, il en faut beaucoup.",
+        "Vingt-cinq ans après avoir écrit Le But, le Dr Goldratt écrivait « Debout sur les épaules des géants »."
+      ]
+    },
+    {
+      "id": "keating",
+      "author": "John Keating",
+      "title": "Dead Poets Society",
+      "edition": "the teacher — he speaks Whitman",
+      "cover": "/assets/books/keating.jpg",
+      "year": 2000,
+      "anchor": "2000 — the teacher, as the operator met him.",
+      "source": "Whitman, O Me! O Life! and O Captain! My Captain! (public domain), as read by the character Keating; « Carpe diem » — Horace",
+      "consent": "public domain lines; the film is cited, not copied",
+      "lines": [
+        "Carpe diem.",
+        "O Captain! my Captain!",
+        "That the powerful play goes on, and you may contribute a verse."
+      ]
+    },
+    {
+      "id": "nakamoto",
+      "author": "Satoshi Nakamoto",
+      "title": "Bitcoin: A Peer-to-Peer Electronic Cash System",
+      "edition": "the whitepaper, 2008 — four constraints, one solution",
+      "cover": "/assets/books/nakamoto.jpg",
+      "year": 2008,
+      "anchor": "2008 — the whitepaper.",
+      "source": "Nakamoto, Bitcoin: A Peer-to-Peer Electronic Cash System (2008), §2–6 and §11 — the constraints are named by the realm (Goldratt's question), the solutions are the paper's own words; the whitepaper is published under the MIT license",
+      "consent": "MIT license, attributed; the constraint half of each line is ours",
+      "note": "jnxmas, 2026-08-29: the paper that moved me into the magic of mathematics — how not to…",
+      "lines": [
+        "Double-spending, with no trusted party → a public chain of timestamped blocks: « the only way to confirm the absence of a transaction is to be aware of all transactions. »",
+        "Who may vote, when identities are free → proof-of-work: « one-CPU-one-vote »; to rewrite history, redo the work.",
+        "Agreement in a room anyone can enter → the longest chain: « proof that it came from the largest pool of CPU power. »",
+        "Why anyone would run it honestly → the reward: « more profitable to play by the rules … than to undermine the system and the validity of his own wealth. »"
+      ]
+    }
+  ],
+  "door": {
+    "line": "What will your verse be?",
+    "by": "John Keating",
+    "source": "Whitman, O Me! O Life! — the question as Keating asks it; the last words before the yawp",
+    "consent": "public domain"
+  }
+}
