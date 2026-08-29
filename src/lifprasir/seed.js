@@ -163,7 +163,7 @@ export function initSeed(container, {
   // "I bequeath myself to the dirt to grow from the grass I love."
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(60, 60),
-    new THREE.MeshBasicMaterial({ color: 0x07070c, transparent: true, opacity: 0.82 })
+    new THREE.MeshBasicMaterial({ color: 0x17a34a, transparent: true, opacity: 0.38, depthWrite: false }) // a transparent green ground; the orb still shines through
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = FLOOR_Y;
@@ -190,7 +190,7 @@ export function initSeed(container, {
     }
     bladeGeo.computeVertexNormals(); }
   const grassMat = new THREE.MeshBasicMaterial({
-    color: 0xbfffd0, transparent: true, opacity: 0.32, side: THREE.DoubleSide, depthWrite: false,
+    color: 0x5cff8a, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false, // a more intense green
   });
   const grass = new THREE.InstancedMesh(bladeGeo, grassMat, GRASS_COUNT);
   grass.visible = false;
