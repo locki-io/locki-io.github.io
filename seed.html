@@ -19,6 +19,27 @@
       body.collapsed .stream { color: #c8d0ff; }
       body.born .stream li { opacity: .35; }
       body.born .title p::after { content: " · the thread is born"; opacity: .8; }
+      /* the timeline: above the title — scrub the act forward or back */
+      .timeline { position: absolute; left: 5vw; top: 2.6vh; width: 38vw; user-select: none; -webkit-user-select: none; touch-action: none; }
+      .tl-track { position: relative; height: 16px; cursor: pointer; }
+      .tl-track::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: rgba(255,255,255,.16); }
+      .tl-fill { position: absolute; left: 0; top: 7px; height: 2px; width: 0; background: #ffb8a8; }
+      .tl-knob { position: absolute; top: 3px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #ffd0c8; transform: translateX(-50%);
+                 box-shadow: 0 0 8px rgba(255,184,168,.6); }
+      .tl-marks { position: relative; height: 38px; }
+      .tl-mark.tick { pointer-events: auto; }
+      .tl-mark:not(.tick):nth-of-type(3n+2) { top: 12px; }
+      .tl-mark:not(.tick):nth-of-type(3n+2)::before { height: 18px; top: -21px; }
+      .tl-mark:not(.tick):nth-of-type(3n) { top: 24px; }
+      .tl-mark:not(.tick):nth-of-type(3n)::before { height: 30px; top: -33px; }
+      .tl-mark { position: absolute; top: 0; transform: translateX(-50%); font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+                 color: rgba(255,255,255,.38); white-space: nowrap; pointer-events: none; }
+      .tl-mark::before { content: ""; position: absolute; left: 50%; top: -9px; width: 1px; height: 6px; background: rgba(255,255,255,.35); }
+      .tl-mark.yawp { color: #ffb8a8; }
+      .tl-mark.private { color: rgba(159,176,255,.6); }
+      .tl-mark.on { color: rgba(255,255,255,.85); }
+      .title { top: 11vh; }
+      @media (max-aspect-ratio: 1/1) { .timeline { width: 90vw; } .title { top: 12vh; } }
       .director { position: absolute; left: 5vw; bottom: 5vh; max-width: 46vw; font-size: 12px; line-height: 1.6;
                   color: #ffd0c8; background: rgba(20,10,14,.7); border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
       .director kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
@@ -27,6 +48,10 @@
   </head>
   <body>
     <div id="seed" aria-hidden="true"></div>
+    <div id="timeline" class="timeline" aria-label="timeline of the act">
+      <div class="tl-track"><div class="tl-fill"></div><div class="tl-knob"></div></div>
+      <div class="tl-marks"></div>
+    </div>
     <div class="title">
       <h1>You mint — lucky you.</h1>
       <p>Act I · the seed</p>

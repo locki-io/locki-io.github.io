@@ -1,0 +1,167 @@
+{
+  "season": {
+    "from": "2023-09-01",
+    "to": "2024-04-30"
+  },
+  "generated": "2026-08-29",
+  "rule": "counts only; private repositories folded; no author, no message",
+  "repos": [
+    {
+      "name": "explorer-dapp",
+      "born": "2023-09-01",
+      "last": "2023-09-25",
+      "commits": 37
+    },
+    {
+      "name": "api.locki.io",
+      "born": "2023-09-16",
+      "last": "2023-09-16",
+      "commits": 2
+    },
+    {
+      "name": "locki-io.github.io",
+      "born": "2023-09-18",
+      "last": "2024-04-07",
+      "commits": 53
+    },
+    {
+      "name": "app.nextjs",
+      "born": "2023-09-27",
+      "last": "2024-04-27",
+      "commits": 181
+    },
+    {
+      "name": "LockiServerless",
+      "born": "2023-09-30",
+      "last": "2024-03-09",
+      "commits": 43
+    },
+    {
+      "name": "locki-chat",
+      "born": "2023-10-16",
+      "last": "2023-10-18",
+      "commits": 10
+    },
+    {
+      "name": "locki-SC-desc",
+      "born": "2023-10-19",
+      "last": "2023-10-19",
+      "commits": 5
+    },
+    {
+      "name": "locki-websocket",
+      "born": "2024-02-26",
+      "last": "2024-02-26",
+      "commits": 1
+    },
+    {
+      "name": "locki-smart-contracts",
+      "born": "2024-04-21",
+      "last": "2024-04-26",
+      "commits": 5
+    }
+  ],
+  "private": {
+    "repos": 4,
+    "commits": 75
+  },
+  "weeks": [
+    {
+      "start": "2023-08-28",
+      "commits": 5
+    },
+    {
+      "start": "2023-09-04",
+      "commits": 17
+    },
+    {
+      "start": "2023-09-11",
+      "commits": 15
+    },
+    {
+      "start": "2023-09-18",
+      "commits": 26
+    },
+    {
+      "start": "2023-09-25",
+      "commits": 15
+    },
+    {
+      "start": "2023-10-02",
+      "commits": 50
+    },
+    {
+      "start": "2023-10-09",
+      "commits": 25
+    },
+    {
+      "start": "2023-10-16",
+      "commits": 30
+    },
+    {
+      "start": "2023-10-23",
+      "commits": 7
+    },
+    {
+      "start": "2023-11-06",
+      "commits": 6
+    },
+    {
+      "start": "2023-12-25",
+      "commits": 1
+    },
+    {
+      "start": "2024-01-01",
+      "commits": 1
+    },
+    {
+      "start": "2024-01-15",
+      "commits": 4
+    },
+    {
+      "start": "2024-01-22",
+      "commits": 1
+    },
+    {
+      "start": "2024-02-05",
+      "commits": 2
+    },
+    {
+      "start": "2024-02-12",
+      "commits": 21
+    },
+    {
+      "start": "2024-02-19",
+      "commits": 32
+    },
+    {
+      "start": "2024-02-26",
+      "commits": 59
+    },
+    {
+      "start": "2024-03-04",
+      "commits": 61
+    },
+    {
+      "start": "2024-03-11",
+      "commits": 7
+    },
+    {
+      "start": "2024-03-18",
+      "commits": 4
+    },
+    {
+      "start": "2024-04-01",
+      "commits": 17
+    },
+    {
+      "start": "2024-04-15",
+      "commits": 2
+    },
+    {
+      "start": "2024-04-22",
+      "commits": 4
+    }
+  ],
+  "total": 412
+}

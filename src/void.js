@@ -1,12 +1,13 @@
 // void.js — entry for void.html, the Act 0 stage (void → 0).
 // The stream on the right is DATA: the four books' own words, with source and consent.
 import { initVoid } from './lifprasir/void.js';
+import { mountTimeline } from './lifprasir/timeline.js';
 
 async function start() {
   const params = new URLSearchParams(location.search);
   const director = params.has('director');
-  let books = [];
-  try { books = (await (await fetch('/story/void.json')).json()).books; } catch (e) { console.warn('the void has no books', e); }
+  let books = [], door = null;
+  try { const story = await (await fetch('/story/void.json')).json(); books = story.books; door = story.door || null; } catch (e) { console.warn('the void has no books', e); }
   let cameraPath = null;
   try { const r = await fetch('/camera/void.json'); if (r.ok) cameraPath = await r.json(); } catch (e) {}
   if (!Array.isArray(cameraPath)) cameraPath = null;
@@ -40,39 +41,17 @@ async function start() {
     onSeek: (u) => { list.innerHTML = ''; tick(u); },
     onBookOpen: (b) => push(`— ${b.author}, ${b.title}${b.edition ? ' · ' + b.edition : ''}`, 'book'),
     onLine: (b, i, line) => push(line),
-    onHold: () => { hold.hidden = false; document.body.classList.add('holding'); },
+    onHold: () => { if (door) { push(door.line, 'door'); const el = hold.querySelector('.door'); if (el) el.textContent = door.line; } hold.hidden = false; document.body.classList.add('holding'); },
     onYawp: () => { hold.hidden = true; document.body.classList.remove('holding'); document.body.classList.add('yawped'); push('YAAAAWP', 'yawp'); },
     onFold: () => { push('— and the light folds into a cube: 0', 'book'); document.body.classList.add('folded'); },
-    onDone: () => { if (!params.has('stay')) { document.body.classList.add('leaving'); setTimeout(() => { location.href = '/seed.html'; }, 900); } },
+    onDone: () => { if (!params.has('stay')) { const f = api.handoff(); document.body.classList.add('leaving'); setTimeout(() => { location.href = `/seed.html?from=${f.x.toFixed(3)},${f.y.toFixed(3)},${f.h.toFixed(3)}`; }, 900); } },
   });
 
-  // --- the timeline bar: scrub the act forward or back ---------------------------
-  const tl = document.getElementById('timeline'), fill = tl.querySelector('.tl-fill'), knob = tl.querySelector('.tl-knob'), marksEl = tl.querySelector('.tl-marks');
-  const track = tl.querySelector('.tl-track');
-  const marks = api.marks.map((m) => {
-    const el = document.createElement('div'); el.className = 'tl-mark' + (m.id === 'yawp' ? ' yawp' : ''); el.textContent = (m.year ? m.year + ' ' : '') + m.label.split(' ').pop();
-    el.style.left = (100 * m.u / api.duration) + '%'; marksEl.appendChild(el); return { ...m, el };
+  // --- the timeline bar: one module for every act ---------------------------------
+  const bar = mountTimeline(document.getElementById('timeline'), {
+    duration: api.duration, seek: api.seek,
+    marks: api.marks.map((m) => ({ u: m.u, label: (m.year ? m.year + ' ' : '') + m.label.split(' ').pop(), cls: m.id === 'yawp' ? 'yawp' : '' })),
   });
-  let lastPct = -1;
-  function tick(u) {
-    const pct = Math.round(1000 * u / api.duration) / 10;
-    if (pct === lastPct) return; lastPct = pct;
-    fill.style.width = pct + '%'; knob.style.left = pct + '%';
-    marks.forEach((m, i) => m.el.classList.toggle('on', u >= m.u && (i === marks.length - 1 || u < marks[i + 1].u)));
-  }
-  function seekFromEvent(e) {
-    const r = track.getBoundingClientRect();
-    api.seek(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * api.duration);
-  }
-  let dragging = false;
-  track.addEventListener('pointerdown', (e) => { dragging = true; track.setPointerCapture(e.pointerId); seekFromEvent(e); });
-  track.addEventListener('pointermove', (e) => { if (dragging) seekFromEvent(e); });
-  track.addEventListener('pointerup', () => { dragging = false; });
-  track.addEventListener('pointercancel', () => { dragging = false; });
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') api.seek(currentU() + 5);
-    else if (e.key === 'ArrowLeft') api.seek(currentU() - 5);
-  });
-  function currentU() { return (parseFloat(fill.style.width) || 0) / 100 * api.duration; }
+  function tick(u) { bar.tick(u); }
 }
 document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', start) : start();

@@ -480,8 +480,16 @@ export function initVoid(container, {
   }
   raf = requestAnimationFrame(frame);
 
+  // where the cube stands on the screen, as fractions — the seed is born there and grows down to its place
+  function handoff() {
+    const c = POINT.clone().project(camera);
+    const top = POINT.clone().add(new THREE.Vector3(0, CUBE / 2, 0)).project(camera);
+    const bot = POINT.clone().add(new THREE.Vector3(0, -CUBE / 2, 0)).project(camera);
+    return { x: (c.x + 1) / 2, y: (1 - c.y) / 2, h: Math.abs(top.y - bot.y) / 2 };
+  }
+
   return {
-    seek, marks, duration: DURATION, holdAt: HOLD_AT,
+    seek, marks, duration: DURATION, holdAt: HOLD_AT, handoff,
     dispose() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);

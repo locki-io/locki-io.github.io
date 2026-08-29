@@ -69,8 +69,7 @@
       "lines": [
         "Carpe diem.",
         "O Captain! my Captain!",
-        "That the powerful play goes on, and you may contribute a verse.",
-        "What will your verse be?"
+        "That the powerful play goes on, and you may contribute a verse."
       ]
     },
     {
@@ -91,5 +90,11 @@
         "Why anyone would run it honestly → the reward: « more profitable to play by the rules … than to undermine the system and the validity of his own wealth. »"
       ]
     }
-  ]
+  ],
+  "door": {
+    "line": "What will your verse be?",
+    "by": "John Keating",
+    "source": "Whitman, O Me! O Life! — the question as Keating asks it; the last words before the yawp",
+    "consent": "public domain"
+  }
 }

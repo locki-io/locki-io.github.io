@@ -26,6 +26,7 @@ const FLOOR_Y = 0.9;            // the ground: just above the radiating orb
 const GRASS_START = 22.5;       // when the camera has risen above — the grass comes out of the floor
 const GRASS_SECONDS = 3.5;
 const GRASS_COUNT = 700;
+const INTRO_SECONDS = 2.6;      // when the act follows the void: the seed is born where the cube stood, and grows down to its place
 
 // Deterministic, like the tree: the same field of grass every time. No Math.random.
 function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -35,8 +36,10 @@ export function initSeed(container, {
   director = false,   // operator mode: orbit the camera, capture keyframes (K), export the path (E)
   cameraPath = null,  // [{ u, position:[x,y,z], target:[x,y,z] }] — played along the timeline when present
   onKeyframes,        // director HUD callback
+  intro = null,       // { x, y, h } screen fractions handed over by the void: where its cube stands, and how tall
+  onTime, onSeek,     // the timeline bar
 } = {}) {
-  if (!container) return () => {};
+  if (!container) return { seek() {}, duration: 0, dispose() {} };
   const reduceMotion =
     window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const N = Math.max(1, stream.length);
@@ -123,6 +126,9 @@ export function initSeed(container, {
   scene.add(root);
   let mixer = null;
   let t0 = null; // when the seed arrived — the timeline starts here
+  const INTRO = intro ? INTRO_SECONDS : 0;
+  let introFrom = null; // { position, scale } — computed once the seed is loaded
+  let seedHeight = 1;
 
   new GLTFLoader().load(
     '/assets/tesseract.glb',
@@ -135,6 +141,16 @@ export function initSeed(container, {
         a.play();
       }
       t0 = clock.elapsedTime;
+      // the seed's own height, for the handoff: the void's cube covered intro.h of the screen
+      const box = new THREE.Box3().setFromObject(gltf.scene); seedHeight = Math.max(0.001, box.max.y - box.min.y);
+      if (intro) {
+        camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+        const depth = new THREE.Vector3(0, 0, 0).project(camera).z;                       // the seed's home depth, in NDC
+        const position = new THREE.Vector3(intro.x * 2 - 1, 1 - intro.y * 2, depth).unproject(camera);
+        const visible = 2 * camera.position.length() * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)); // scene units across the frame's height at the origin
+        introFrom = { position, scale: Math.max(0.02, (intro.h * visible) / seedHeight) };
+        mixer.timeScale = 0;                                                               // it breathes once it is home
+      }
       console.log('%cThe seed. You mint — lucky you.', 'color:#4a6bff;font-weight:bold');
     },
     undefined,
@@ -245,7 +261,32 @@ export function initSeed(container, {
   // --- the timeline ----------------------------------------------------------
   const BREATH_END = N * BREATH_PERIOD;
   const BIRTH_START = BREATH_END + COLLAPSE_SECONDS;
+  const DURATION = GRASS_START + GRASS_SECONDS + 2.5;
   let beatsShown = 0, collapsed = false, born = false;
+
+  // the intro: from where the void's cube stood, down to the seed's place
+  function setIntro(k) {
+    if (!introFrom) return;
+    const e = k * k * (3 - 2 * k);
+    root.position.lerpVectors(introFrom.position, new THREE.Vector3(0, 0, 0), e);
+    root.scale.setScalar(introFrom.scale + (1 - introFrom.scale) * e);
+    root.visible = true;
+    if (k >= 1 && mixer) mixer.timeScale = 1;
+  }
+
+  // seek: the timeline bar. Every phase derives from u, so moving is a reset of the flags + a new t0.
+  function seek(u) {
+    u = Math.max(0, Math.min(DURATION, u));
+    if (t0 === null) return;
+    t0 = clock.elapsedTime - u - INTRO;
+    if (introFrom) { setIntro(1); }
+    beatsShown = 0; onSeek && onSeek(u);                       // the stream is replayed up to u by setState's catch-up
+    collapsed = u >= BREATH_END; born = u >= BIRTH_START;
+    if (mixer) mixer.timeScale = u < BREATH_END ? 1 : 0;
+    root.visible = u < BIRTH_START; root.scale.setScalar(1); root.position.set(0, 0, 0);
+    thread.scale.y = 0.0001; coreMat.opacity = 0; haloMat.opacity = 0; spark.visible = false;
+    floor.visible = pin.visible = grass.visible = false; glow.scale.setScalar(1.4);
+  }
 
   function setState(u) {
     // The stream keeps time with the breath — and catches up in EVERY phase, so a
@@ -295,7 +336,13 @@ export function initSeed(container, {
     const dt = clock.getDelta();
     const t = clock.elapsedTime;
     if (mixer) mixer.update(dt);
-    if (t0 !== null) { currentU = t - t0; setState(currentU); }
+    if (t0 !== null) {
+      currentU = t - t0 - INTRO;
+      if (currentU < 0) { setIntro(1 + currentU / INTRO); currentU = 0; }
+      else if (introFrom && currentU < 0.05) setIntro(1);
+      setState(currentU);
+      onTime && onTime(currentU);
+    }
     if (controls) controls.update();               // the operator's hand
     else if (t0 !== null) applyCameraPath(currentU); // the authored path, as data
     renderer.render(scene, camera);
@@ -312,12 +359,15 @@ export function initSeed(container, {
     frame();
   }
 
-  return function dispose() {
-    cancelAnimationFrame(raf);
-    window.removeEventListener('resize', onResize);
-    window.removeEventListener('keydown', onKey);
-    if (controls) controls.dispose();
-    renderer.dispose();
-    renderer.domElement.remove();
+  return {
+    seek, duration: DURATION,
+    dispose() {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('keydown', onKey);
+      if (controls) controls.dispose();
+      renderer.dispose();
+      renderer.domElement.remove();
+    },
   };
 }

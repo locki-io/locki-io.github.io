@@ -22,6 +22,7 @@
       /* the hold: the act waits for the player's first gesture */
       .hold { position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%); text-align: center; pointer-events: none;
               font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: #ffd0c8; opacity: 0; animation: breathe 2.2s ease-in-out infinite; }
+      .hold .door { font-family: Georgia, serif; font-style: italic; text-transform: none; letter-spacing: .02em; font-size: 20px; color: #f0d9b0; margin-bottom: .8em; }
       .hold b { display: block; font-size: 26px; letter-spacing: .4em; margin-bottom: .3em; }
       @keyframes breathe { 0%, 100% { opacity: .35 } 50% { opacity: .95 } }
       body.leaving::after { content: ""; position: absolute; inset: 0; background: #07070c; animation: fade .9s ease forwards; }
@@ -74,6 +75,7 @@
     </div>
     <ol id="stream" class="stream" aria-label="what the books say"></ol>
     <div id="hold" class="hold" hidden aria-live="polite">
+      <div class="door"></div>
       <b>YAWP</b>
       the books have spoken — sound yours · any key, or touch
     </div>
