@@ -1,0 +1,22 @@
+"data_stream": {
+  "category": "anyfile",
+  "created_on": "2023-10-23",
+  "creator": "Locki Labs",
+  "last_modified_on": "2024-02-23",
+  "marshalManifest": {
+    "nestedStream": "true",
+    "totalItems": 1
+  },
+  "name": "pTesseract"
+},
+"data": [
+  {
+    "date": "2024-02-23T02:16:05.176Z",
+    "file": "https://gateway.lighthouse.storage/ipfs/QmSk9ign4Gp2sXcPe83mYf2FxHi1VB4bexPnFXzWhoDm6x/904_datastreamlocki1glb",
+    "idx": 1,
+    "mime_type": "",
+    "name": "904_datastreamlocki1glb",
+    "size": 751832
+  }
+]
+}
