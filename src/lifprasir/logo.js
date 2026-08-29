@@ -18,7 +18,7 @@ import * as THREE from 'three';
 import { createDirector } from './director.js';
 
 const R = 1.6, r = 0.5;                 // major and minor radii, both tori
-const NECK = 2 * r;                     // the tori overlap by one tube diameter: their cross-sections coincide in the middle (centres 2R apart)
+const NECK = 2 * r;                     // the tubes overlap by one diameter: centres 2R apart — the lens in the middle (operator: "like this")
 const CUBE = 2 * r * 0.92;              // the subtracted cube: the tube's diameter, almost
 const GAP = (CUBE * 1.25) / R;          // the arc the cube took out of the C (radians)
 const JOIN = 0.22;                      // radians: the spark blends from one circle to the other over this window at the neck
@@ -34,7 +34,7 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   scene.background = new THREE.Color(0x000000);
   const camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
   const lookTarget = new THREE.Vector3(0.9, 0, 0);
-  camera.position.set(0.9, -0.5, 10.6); camera.lookAt(lookTarget);     // read from the front: O C — the stream keeps the right
+  lookTarget.set(1.4, 0, 0); camera.position.set(1.4, -0.5, 11.4); camera.lookAt(lookTarget);   // read from the front: O C — the stream keeps the right
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
