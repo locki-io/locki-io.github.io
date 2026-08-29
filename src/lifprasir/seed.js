@@ -282,7 +282,7 @@ export function initSeed(container, {
     t0 = clock.elapsedTime - u - INTRO;
     if (introFrom) { setIntro(1); }
     beatsShown = 0; onSeek && onSeek(u);                       // the stream is replayed up to u by setState's catch-up
-    collapsed = u >= BREATH_END; born = u >= BIRTH_START;
+    collapsed = false; born = false;                             // setState re-fires onCollapse / onBirth as it catches up
     if (mixer) mixer.timeScale = u < BREATH_END ? 1 : 0;
     root.visible = u < BIRTH_START; root.scale.setScalar(HOME_SCALE); root.position.set(0, 0, 0);
     thread.scale.y = 0.0001; coreMat.opacity = 0; haloMat.opacity = 0; spark.visible = false;
@@ -361,7 +361,7 @@ export function initSeed(container, {
   }
 
   return {
-    seek, duration: DURATION,
+    seek, duration: DURATION, ready: () => t0 !== null,
     dispose() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
