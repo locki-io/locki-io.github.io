@@ -28,22 +28,22 @@ const LAP_SECONDS = 6.0;                // seconds for the spark to run both cir
 const ease = (s) => s * s * (3 - 2 * s);
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0, distance = DIST, onDistance } = {}) {
+export function initLogo(container, { director = false, cameraPath = null, onKeyframes, onStop, onClose, onClosed, autoClose = false, startAt = 0, closeSkip = 0, distance = DIST, onDistance, color = 0xc1121f, seedColor = 0x1b2bff } = {}) {
   if (!container) return { dispose() {} };
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
   const camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
   const lookTarget = new THREE.Vector3(0.9, 0, 0);
-  lookTarget.set(1.0, 0, 0); camera.position.set(1.0, -0.5, 10.6); camera.lookAt(lookTarget);   // read from the front: O C — the stream keeps the right
+  lookTarget.set(1.9, 0, 0); camera.position.set(1.9, -0.5, 11.8); camera.lookAt(lookTarget);   // read from the front: O C — the stream keeps the right
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
   const dir = createDirector({ camera, dom: renderer.domElement, act: 'logo', target: lookTarget, director, cameraPath, onKeyframes });
 
-  scene.add(new THREE.HemisphereLight(0xffd0c8, 0x100a12, 0.45));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x100a12, 0.4));
   const key = new THREE.DirectionalLight(0xfff1dc, 1.3); key.position.set(-8, 8, 6); scene.add(key);   // top-left
-  const rim = new THREE.DirectionalLight(0xff5a4a, 0.5); rim.position.set(6, -4, -6); scene.add(rim);
+  const rim = new THREE.DirectionalLight(color, 0.5); rim.position.set(6, -4, -6); scene.add(rim);
 
   // --- the two tori: the logo, red ----------------------------------------------
   const A = new THREE.Vector3(), B = new THREE.Vector3();
@@ -53,7 +53,9 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
     O.position.copy(A); C.position.copy(B); cubeGroup.position.set(B.x + R, 0, 0);
     onDistance && onDistance(dist, dist / R, dist / r);
   }
-  const mat = new THREE.MeshStandardMaterial({ color: 0xff2a3a, emissive: 0x7a0f18, emissiveIntensity: 0.45, roughness: 0.4, metalness: 0.05 });
+  // the tori wear the season's accent (public/story/seasons.json); the emissive is the same colour, dimmed — the C's inside must not go to mud
+  const tone = new THREE.Color(color);
+  const mat = new THREE.MeshStandardMaterial({ color: tone, emissive: tone.clone().multiplyScalar(0.45), emissiveIntensity: 1, roughness: 0.4, metalness: 0.05 });
   const O = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140), mat); O.position.copy(A); scene.add(O);
   const C = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140, Math.PI * 2 - GAP), mat); C.position.copy(B); scene.add(C);
   function setGap(g) {                                                    // the arc IS the subtraction; the C's arc starts at +x, so centre the gap there
@@ -66,8 +68,8 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   const cubeGroup = new THREE.Group(); scene.add(cubeGroup);
   const cubeMats = [];
   [1, 0.5, 0.25].forEach((k) => {
-    const faces = new THREE.MeshBasicMaterial({ color: 0x1b2bff, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide });
-    const edges = new THREE.LineBasicMaterial({ color: 0x5f7dff, transparent: true, opacity: 0.95 });
+    const faces = new THREE.MeshBasicMaterial({ color: seedColor, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide });
+    const edges = new THREE.LineBasicMaterial({ color: new THREE.Color(seedColor).lerp(new THREE.Color(0xffffff), 0.35), transparent: true, opacity: 0.95 });
     cubeMats.push(faces, edges);
     cubeGroup.add(new THREE.Mesh(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k), faces));
     cubeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k)), edges));
