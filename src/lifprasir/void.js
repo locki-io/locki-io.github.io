@@ -1,43 +1,61 @@
-// void.js — Act 0, void → 0: four books open, and their words become light.
+// void.js — Act 0, void → 0: the books orbit, open one by one, and their words become light.
 //
-// Black. One point. Four books rise out of the dark, one after the other, and
-// open. Each line of the STREAM is typed onto the open page — a real book,
-// streaming text — and when a line is complete its letters lift off the paper
-// as light and drift to the point. Human experience, parsed as light.
+// Black. One point. The books ride a carousel — an orbit around the point of
+// power: FAR at the back, small and dim; CLOSE at the front, where a book
+// comes to be read. The carousel turns, the close book opens, each line of the
+// STREAM is typed onto its page — a real book, streaming text — and when a line
+// is complete its letters lift off the paper as light and drift to the point.
+// The book closes, the carousel turns, the next one opens. Human experience,
+// parsed as light.
 //
-// When the fourth book has spoken the act HOLDS: nothing moves until the player
-// makes the first gesture — the YAWP (any key, click or touch). The shockwave
-// jolts the gathered light, which folds into the twelve edges of a cube: the
-// tesseract's first outline, the 0 from which the seed (Act I) is minted.
+// When the last book has spoken the act HOLDS: nothing moves but the slow turn
+// of the carousel until the player makes the first gesture — the YAWP (any key,
+// click or touch). The shockwave jolts the gathered light, which folds into the
+// twelve edges of a cube: the tesseract's first outline, the 0 from which the
+// seed (Act I) is minted.
 //
-// Everything is data: the books, their lines, `source:` and `consent:` come from
-// public/story/void.json; the camera path from public/camera/void.json.
+// The timeline is scrubbable: seek(u) moves forward (exact — every event is
+// catch-up safe) or back (lines un-fire, their light is withdrawn). The layout
+// is computed from the frame's aspect: landscape puts the orbit on the left
+// and the stream on the right; portrait (a phone) stacks the orbit above and
+// lets the page put the stream below. Everything else is data: the books,
+// their lines, `source:` and `consent:` come from public/story/void.json; the
+// camera path from public/camera/void.json.
 
 import * as THREE from 'three';
 import { createDirector } from './director.js';
 
 // --- timeline (seconds) --------------------------------------------------------
-const PRE = 1.4;            // the point alone in the dark
-const SLIDE = 1.0;          // a book rises out of the void
-const OPEN = 1.5;           // the cover swings open
+const PRE = 1.4;            // the point alone in the dark; the books fade in on the orbit
+const TURN = 1.3;           // the carousel brings the next book to the close position
+const OPEN = 1.3;           // the cover swings open
+const CLOSE = 0.9;          // and closes again when the book has spoken
 const CPS = 30;             // characters typed per second — a human reading pace
 const LINE_GAP = 0.55;      // breath between two lines
-const BOOK_GAP = 1.0;       // breath between two books
+const BOOK_GAP = 0.4;       // breath between two books
 const SHOCK = 1.3;          // the yawp's shockwave
 const FOLD_START = 0.35, FOLD = 1.9;   // light folds into the cube's edges
 const CUBE_IN = 1.8, CUBE_FADE = 1.2;  // the outline appears
-const SINK_START = 0.6, SINK = 1.8;    // the books go back into the dark
+const SINK_START = 0.6, SINK = 1.8;    // the books leave on the orbit
 const DONE_AT = 5.2;        // → follow the thread into the seed
 
-const BOOK_H_MAX = 1.2;     // book height in scene units; width follows the cover's aspect
-const COL_H_MAX = 6.0;      // the column must fit the frame — more books, smaller books
-let BOOK_H = BOOK_H_MAX;
-const COL_X = -3.7;         // the books stand in a column on the left; the stream is on the right
-const COL_GAP = 0.22;
-const COL_Y = 0.5;          // the column's centre, a little under the point so the top book clears the title
+const BOOK_H = 1.4;         // book height in scene units; width follows the cover's aspect
 const THICK = 0.14;
-const POINT = new THREE.Vector3(0, 0.9, 1.1);    // the point of power — the 0, between the books and the stream
 const CUBE = 0.9;           // side of the cube the light folds into
+const FAR_SCALE = 0.62;     // a book at the far side of the orbit
+
+// --- layout: two presets, blended by the frame's aspect -------------------------
+// C = orbit centre · rx/rz = orbit radii · lift = how much higher the far side is
+// point = the point of power · cam/target = the camera when no path is authored
+const LANDSCAPE = { C: [-2.1, 1.9, -1.2], rx: 2.3, rz: 2.4, lift: 1.0, point: [0.6, 0.6, 1.4], cam: [0, 1.3, 8.8], target: [0, 1.1, 0] };
+const PORTRAIT = { C: [0, 3.6, -1.2], rx: 1.25, rz: 2.2, lift: 0.9, point: [0, 4.6, 1.4], cam: [0, 2.6, 13.0], target: [0, 2.6, 0] };
+function blendLayout(aspect) {
+  const k = Math.min(1, Math.max(0, (1.05 - aspect) / 0.35)); // 0 at ≥1.05 (landscape) … 1 at ≤0.7 (phone)
+  const mix = (a, b) => a + (b - a) * k;
+  const v = (a, b) => new THREE.Vector3(mix(a[0], b[0]), mix(a[1], b[1]), mix(a[2], b[2]));
+  return { C: v(LANDSCAPE.C, PORTRAIT.C), rx: mix(LANDSCAPE.rx, PORTRAIT.rx), rz: mix(LANDSCAPE.rz, PORTRAIT.rz), lift: mix(LANDSCAPE.lift, PORTRAIT.lift),
+    point: v(LANDSCAPE.point, PORTRAIT.point), cam: v(LANDSCAPE.cam, PORTRAIT.cam), target: v(LANDSCAPE.target, PORTRAIT.target), k };
+}
 
 // Deterministic, like the tree and the grass: the same light every time.
 function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -114,22 +132,24 @@ function spriteTexture() {
 export function initVoid(container, {
   books = [],
   director = false, cameraPath = null, onKeyframes,
-  onBookOpen, onLine, onHold, onYawp, onFold, onDone,
+  onBookOpen, onLine, onHold, onYawp, onFold, onDone, onLayout, onTime, onSeek,
   autoYawp = false,   // testing: sound the yawp by itself after the hold
   speed = 1,          // testing: run the timeline faster (never in the story itself)
   startAt = 0,        // testing: begin the timeline at this second ('hold' = just before the hold)
   yawpSkip = 0,       // testing: when autoYawp fires, pretend it happened this many seconds ago
 } = {}) {
-  if (!container || !books.length) return () => {};
-  BOOK_H = Math.min(BOOK_H_MAX, (COL_H_MAX - (books.length - 1) * COL_GAP) / books.length);
+  if (!container || !books.length) return { dispose() {}, seek() {}, duration: 0, holdAt: 0, marks: [] };
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const n = books.length;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
+  scene.fog = new THREE.Fog(0x000000, 9, 17);     // the far side of the orbit fades into the void
   const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 1.0, 9.6);
-  const lookTarget = new THREE.Vector3(0, 0.9, 0);
-  camera.lookAt(lookTarget);
+  const lookTarget = new THREE.Vector3();
+  let L = blendLayout(camera.aspect);
+  const POINT = L.point.clone();                   // the point of power — the 0
+  camera.position.copy(L.cam); lookTarget.copy(L.target); camera.lookAt(lookTarget);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -138,9 +158,9 @@ export function initVoid(container, {
 
   const dir = createDirector({ camera, dom: renderer.domElement, act: 'void', target: lookTarget, director, cameraPath, onKeyframes });
 
-  // --- light: the dark, and the point ---------------------------------------
-  scene.add(new THREE.HemisphereLight(0x9fb0ff, 0x1a0f0a, 0.45));
-  const key = new THREE.DirectionalLight(0xfff1dc, 0.9); key.position.set(3, 6, 6); scene.add(key);
+  // --- light: from the top-left corner, and from the point ----------------------
+  scene.add(new THREE.HemisphereLight(0x9fb0ff, 0x1a0f0a, 0.35));
+  const key = new THREE.DirectionalLight(0xfff1dc, 1.1); key.position.set(-9, 9, 5); scene.add(key); // the top-left corner
   const pointLight = new THREE.PointLight(0x7fb8ff, 6, 12, 2); pointLight.position.copy(POINT); scene.add(pointLight);
   const glowTex = spriteTexture();
   const orb = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0x9fd0ff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
@@ -150,9 +170,6 @@ export function initVoid(container, {
 
   // --- the books --------------------------------------------------------------
   const loader = new THREE.TextureLoader();
-  // a column on the left, top to bottom, centred on the point's height
-  const colH = books.length * BOOK_H + (books.length - 1) * COL_GAP;
-  const slots = books.map((_, i) => COL_Y + colH / 2 - BOOK_H / 2 - i * (BOOK_H + COL_GAP));
   const rigs = books.map((book, i) => {
     const rows = layoutBook(book);
     const canvas = document.createElement('canvas'); canvas.width = PAGE_W; canvas.height = PAGE_H;
@@ -162,21 +179,18 @@ export function initVoid(container, {
     drawPage(ctx, book, rows, typed);
 
     const group = new THREE.Group();
-    const ySlot = slots[i];
-    group.position.set(COL_X - 5, ySlot, -0.6);      // starts far out in the void on the left, unseen
     group.visible = false;
-    group.rotation.y = 0.22;                         // turned a little toward the point
     scene.add(group);
 
     const coverMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.82, metalness: 0.02 });
     const insideMat = new THREE.MeshStandardMaterial({ color: 0xe9dfc8, roughness: 0.95, emissive: 0x9a8b70, emissiveIntensity: 0.22 });
-    const rig = { book, rows, ctx, pageTex, typed, group, coverMat, ySlot, w: BOOK_H * 0.62, built: false, opened: false, fired: book.lines.map(() => false), sunk: false };
+    const rig = { book, rows, ctx, pageTex, typed, group, coverMat, w: BOOK_H * 0.62, built: false, opened: false, fired: book.lines.map(() => false) };
 
     function build(aspect) {
       const w = BOOK_H * aspect; rig.w = w;
-      // pages block (the closed book's body); its top face at z=+THICK/2 is the right-hand page
+      // pages block (the closed book's body); its front face at z=+THICK/2 is the right-hand page
       const block = new THREE.Mesh(new THREE.BoxGeometry(w - 0.03, BOOK_H - 0.03, THICK), new THREE.MeshStandardMaterial({ color: 0xefe6d0, roughness: 0.9 }));
-      block.position.set(0, 0, 0); group.add(block);
+      group.add(block);
       const page = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.09, BOOK_H - 0.09),
         new THREE.MeshStandardMaterial({ map: pageTex, emissiveMap: pageTex, emissive: 0xfff3dc, emissiveIntensity: 0.28, roughness: 0.95 }));
       page.position.set(0, 0, THICK / 2 + 0.002); group.add(page); rig.page = page;
@@ -203,30 +217,32 @@ export function initVoid(container, {
   // --- the script: every event has its moment on the timeline -----------------
   let t = PRE;
   rigs.forEach((rig) => {
-    rig.tSlide = t; t += SLIDE;
+    rig.tArrive = t; t += TURN;                       // the carousel turns; this book comes close
     rig.tOpen = t; t += OPEN;
     rig.lineT = rig.book.lines.map((text, li) => {
       const chars = rig.rows.filter((r) => r.li === li).reduce((a, r) => a + r.text.length + 1, 0);
       const start = t; t += chars / (reduceMotion ? CPS * 3 : CPS) + LINE_GAP;
       return { start, end: t - LINE_GAP, chars };
     });
-    t += BOOK_GAP;
+    rig.tClose = t; t += CLOSE + BOOK_GAP;            // the book has spoken; it closes
   });
   const HOLD_AT = t;
-  const START = startAt === 'hold' ? Math.max(0, HOLD_AT - 1) : Math.max(0, +startAt || 0);
+  const DURATION = HOLD_AT + DONE_AT;                 // the whole act, yawp included, for the timeline bar
+  const marks = rigs.map((rig) => ({ u: rig.tArrive, id: rig.book.id, label: rig.book.author })).concat([{ u: HOLD_AT, id: 'yawp', label: 'yawp' }]);
+  let START = startAt === 'hold' ? Math.max(0, HOLD_AT - 1) : Math.max(0, +startAt || 0);
 
   // --- the light: one pool of points, budgeted per line -----------------------
   const perLine = rigs.flatMap((rig) => rig.book.lines.map((s) => Math.min(70, Math.max(14, Math.round(s.length * 0.9)))));
   const TOTAL = perLine.reduce((a, b) => a + b, 0);
   const pos = new Float32Array(TOTAL * 3), col = new Float32Array(TOTAL * 3);
-  const P = []; // particle state
+  let P = []; // particle state
   const pGeo = new THREE.BufferGeometry();
   pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   pGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   pGeo.setDrawRange(0, 0);
   const points = new THREE.Points(pGeo, new THREE.PointsMaterial({
     map: glowTex, size: 0.075, vertexColors: true, transparent: true, opacity: 0.95,
-    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: false,
   }));
   scene.add(points);
   const warm = new THREE.Color(0xffd28a), blue = new THREE.Color(0x8fc6ff), white = new THREE.Color(0xffffff);
@@ -234,17 +250,17 @@ export function initVoid(container, {
   const tmpV = new THREE.Vector3(), tmpC = new THREE.Color();
 
   // the cube the light folds into — 12 edges of a cube around the point
-  const h = CUBE / 2, C = [[-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],[-h,-h,h],[h,-h,h],[h,h,h],[-h,h,h]];
+  const h = CUBE / 2, CV = [[-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],[-h,-h,h],[h,-h,h],[h,h,h],[-h,h,h]];
   const EDGES = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-  function edgePoint(k, s, out) { const [a, b] = EDGES[k]; return out.set(C[a][0] + (C[b][0]-C[a][0])*s, C[a][1] + (C[b][1]-C[a][1])*s, C[a][2] + (C[b][2]-C[a][2])*s); }
+  function edgePoint(k, s, out) { const [a, b] = EDGES[k]; return out.set(CV[a][0] + (CV[b][0]-CV[a][0])*s, CV[a][1] + (CV[b][1]-CV[a][1])*s, CV[a][2] + (CV[b][2]-CV[a][2])*s); }
 
+  function lineIndex(rig, li) { return rigs.slice(0, rigs.indexOf(rig)).reduce((a, r) => a + r.book.lines.length, 0) + li; }
   function emitLine(rig, li, now) {
-    const idx = rigs.indexOf(rig);
-    const n = perLine[rigs.slice(0, idx).reduce((a, r) => a + r.book.lines.length, 0) + li];
+    const cnt = perLine[lineIndex(rig, li)];
     const rows = rig.rows.filter((r) => r.li === li);
     if (!rig.page || !rows.length) return;
     const pw = rig.w - 0.09, ph = BOOK_H - 0.09;
-    for (let j = 0; j < n && used < TOTAL; j++) {
+    for (let j = 0; j < cnt && used < TOTAL; j++) {
       const r = rows[Math.floor(hash(used * 7 + 1) * rows.length)];
       const px = MARGIN + hash(used * 3 + 2) * r.w, py = r.y - 10 + (hash(used * 5 + 3) - 0.5) * 16;
       tmpV.set((px / PAGE_W - 0.5) * pw, (0.5 - py / PAGE_H) * ph, 0.02).applyMatrix4(rig.page.matrixWorld);
@@ -254,7 +270,7 @@ export function initVoid(container, {
         sx: tmpV.x, sy: tmpV.y, sz: tmpV.z,
         jx: (hash(seed * 17 + 9) - 0.5) * 0.5, jy: (hash(seed * 19 + 11) - 0.5) * 0.5, jz: (hash(seed * 23 + 13) - 0.5) * 0.5,
         arc: (hash(seed * 29 + 15) - 0.5) * 1.6, spin: 0.25 + hash(seed * 31 + 17) * 0.5,
-        edge: Math.floor(hash(seed * 37 + 19) * 12), s: hash(seed * 41 + 21), arrived: false,
+        edge: Math.floor(hash(seed * 37 + 19) * 12), s: hash(seed * 41 + 21),
       });
       pos[used * 3] = tmpV.x; pos[used * 3 + 1] = tmpV.y; pos[used * 3 + 2] = tmpV.z;
       col[used * 3] = warm.r; col[used * 3 + 1] = warm.g; col[used * 3 + 2] = warm.b;
@@ -267,70 +283,127 @@ export function initVoid(container, {
   // --- the yawp: shockwave + fold ---------------------------------------------
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.92, 1.0, 96),
     new THREE.MeshBasicMaterial({ color: 0xffe2b8, transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
-  ring.position.copy(POINT); scene.add(ring);
-  const cubeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE, CUBE, CUBE));
+  scene.add(ring);
   const cubeMat = new THREE.LineBasicMaterial({ color: 0x5fb0ff, transparent: true, opacity: 0 });
-  const cube = new THREE.LineSegments(cubeGeo, cubeMat); cube.position.copy(POINT); scene.add(cube);
-  const inner = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * 0.5, CUBE * 0.5, CUBE * 0.5)), cubeMat.clone()); inner.position.copy(POINT); scene.add(inner);
-  const cubeGroup = new THREE.Group(); cubeGroup.position.copy(POINT); scene.add(cubeGroup);
-  scene.remove(cube); scene.remove(inner); cube.position.set(0, 0, 0); inner.position.set(0, 0, 0); cubeGroup.add(cube, inner);
+  const cube = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE, CUBE, CUBE)), cubeMat);
+  const inner = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * 0.5, CUBE * 0.5, CUBE * 0.5)), cubeMat.clone());
+  const cubeGroup = new THREE.Group(); cubeGroup.add(cube, inner); scene.add(cubeGroup);
 
   let holding = false, held = false, yawpAt = null, done = false, foldFired = false;
+  function armHold(on) {
+    if (on) { window.addEventListener('keydown', onGesture); window.addEventListener('pointerdown', onGesture); }
+    else { window.removeEventListener('keydown', onGesture); window.removeEventListener('pointerdown', onGesture); }
+  }
   function yawp() {
     if (!holding || yawpAt !== null) return;
     yawpAt = performance.now() / 1000 - (yawpSkip || 0);
     holding = false;
-    window.removeEventListener('keydown', onGesture); window.removeEventListener('pointerdown', onGesture);
+    armHold(false);
     onYawp && onYawp();
   }
   function onGesture(e) {
-    if (dir.active && e.type === 'keydown' && /^[keKE]$/.test(e.key)) return; // the director's keys stay the director's
+    if (e.type === 'keydown' && (e.key.startsWith('Arrow') || (dir.active && /^[keKE]$/.test(e.key)))) return; // arrows scrub; the director's keys stay the director's
+    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.timeline')) return;      // the timeline bar is not a yawp
     yawp();
   }
 
-  // --- resize ------------------------------------------------------------------
+  // --- seek: the timeline bar ------------------------------------------------------
+  let t0 = null, holdStart = null, holdAccum = 0, raf = 0, lastNow = 0;
+  function seek(uNew) {
+    const now = lastNow;
+    uNew = Math.max(0, Math.min(DURATION, uNew));
+    const wasHolding = holding;
+    holding = false; if (wasHolding) armHold(false);
+    if (uNew <= HOLD_AT) {
+      // back on the reading timeline: everything after uNew has not happened yet
+      START = uNew; t0 = now; holdAccum = 0; held = false;
+      yawpAt = null; foldFired = false; done = false;
+      let keep = 0;
+      rigs.forEach((rig) => {
+        rig.opened = uNew >= rig.tOpen;
+        rig.lineT.forEach((Lt, li) => {
+          const wasFired = rig.fired[li];
+          rig.fired[li] = uNew >= Lt.end;
+          if (rig.fired[li]) keep += perLine[lineIndex(rig, li)];
+          if (wasFired && !rig.fired[li]) rig.typed[li] = 0;   // its light goes back into the page
+        });
+        drawPage(rig.ctx, rig.book, rig.rows, rig.typed); rig.pageTex.needsUpdate = true;
+      });
+      // withdraw the light of lines that have not been read yet; keep the rest as gathered
+      // (lines that are read but whose light was never emitted — a jump forward — emit in the next frame)
+      let emitted = 0; const keptP = [];
+      rigs.forEach((rig) => rig.lineT.forEach((Lt, li) => {
+        const cnt = perLine[lineIndex(rig, li)];
+        if (rig.fired[li] && emitted + cnt <= used && P.length >= emitted + cnt) { for (let j = 0; j < cnt; j++) keptP.push(P[emitted + j]); }
+        else if (rig.fired[li]) { rig.fired[li] = false; }   // let the frame re-emit it from the page
+        emitted += rig.fired[li] || (uNew >= Lt.end) ? cnt : 0;
+      }));
+      P = keptP; used = P.length;
+      P.forEach((p) => { p.foldFrom = null; p.t0 = Math.min(p.t0, now - p.dur); });   // whatever stays is gathered
+      pGeo.setDrawRange(0, used); pGeo.attributes.position.needsUpdate = true;
+    } else {
+      // into the yawp: the books have spoken; pretend the gesture happened (uNew − HOLD_AT) ago
+      START = HOLD_AT; t0 = now; holdAccum = 0; held = true;
+      rigs.forEach((rig) => { rig.opened = true; rig.lineT.forEach((Lt, li) => { rig.fired[li] = rig.fired[li] || false; }); });
+      if (yawpAt === null) { onYawp && onYawp(); }
+      yawpAt = now - (uNew - HOLD_AT);
+      foldFired = uNew - HOLD_AT >= FOLD_START + FOLD; done = uNew - HOLD_AT >= DONE_AT;
+      P.forEach((p) => { p.foldFrom = null; });
+    }
+    onSeek && onSeek(uNew);
+  }
+
+  // --- resize: the layout follows the frame -------------------------------------
   function resize() {
     const w = container.clientWidth, hh = container.clientHeight;
     camera.aspect = w / hh; camera.updateProjectionMatrix(); renderer.setSize(w, hh);
+    L = blendLayout(camera.aspect);
+    POINT.copy(L.point);
+    pointLight.position.copy(POINT); orb.position.copy(POINT); core.position.copy(POINT); ring.position.copy(POINT); cubeGroup.position.copy(POINT);
+    if (!dir.active && !(cameraPath && cameraPath.length)) { camera.position.copy(L.cam); lookTarget.copy(L.target); camera.lookAt(lookTarget); }
+    onLayout && onLayout(L.k > 0.5 ? 'portrait' : 'landscape', L.k);
   }
   window.addEventListener('resize', resize);
+  resize();
 
   // --- the loop ----------------------------------------------------------------
-  let t0 = null, holdStart = null, holdAccum = 0, raf = 0;
-  const clock = { now: 0 };
   function frame(nowMs) {
     raf = requestAnimationFrame(frame);
-    const now = nowMs / 1000; clock.now = now;
+    const now = nowMs / 1000; lastNow = now;
     if (t0 === null) t0 = now;
     // timeline u: seconds of story, minus the time spent holding for the yawp
     let u = START + (now - t0 - holdAccum) * speed;
     if (holding) { holdAccum += now - holdStart; holdStart = now; u = HOLD_AT; }
+    const ty = yawpAt === null ? -1 : now - yawpAt;
 
-    // books rise, open, type
-    rigs.forEach((rig) => {
+    // the carousel: a(u) counts the turns; book i sits at angle θ = (i − a)·2π/n, θ = 0 is CLOSE
+    let a = -1;
+    rigs.forEach((rig) => { a += ease(clamp01((u - rig.tArrive) / TURN)); });
+    const idle = (u >= HOLD_AT ? (now - t0) * 0.04 : 0) + (ty > 0 ? ty * ty * 0.12 : 0); // slow drift while holding; a spin-out after the yawp
+    const appear = ease(clamp01(u / PRE));
+    const sink = ty > 0 ? ease(clamp01((ty - SINK_START) / SINK)) : 0;
+
+    rigs.forEach((rig, i) => {
       if (!rig.built) return;
-      const rise = ease(clamp01((u - rig.tSlide) / SLIDE));
-      rig.group.visible = rise > 0;
-      let x = COL_X - 5 + rise * 5;                    // in from the void on the left, to its place in the column
-      const open = ease(clamp01((u - rig.tOpen) / OPEN));
+      const th = (i - a) * (2 * Math.PI / n) + idle;
+      const c = Math.cos(th), s = Math.sin(th);
+      // orbit: x across, z toward the camera at θ=0, y higher at the far side
+      rig.group.position.set(L.C.x + L.rx * s, L.C.y - L.lift * c, L.C.z + L.rz * c);
+      const near = (1 + c) / 2;                       // 1 at CLOSE, 0 at FAR
+      const sc = (FAR_SCALE + (1 - FAR_SCALE) * near) * appear * (1 - sink);
+      rig.group.scale.setScalar(Math.max(0.0001, sc));
+      rig.group.visible = sc > 0.001;
+      rig.group.rotation.set(0, 0.35 * s, 0);        // facing the reader, turned a little with the orbit
+      const open = ease(clamp01((u - rig.tOpen) / OPEN)) * (1 - ease(clamp01((u - rig.tClose) / CLOSE)));
       rig.pivot.rotation.y = -open * Math.PI * 0.92;
       if (open > 0 && !rig.opened) { rig.opened = true; onBookOpen && onBookOpen(rig.book); }
-      // the closed book turns toward the point; the open one faces the reader
-      rig.group.rotation.y = 0.22 * (1 - open) + 0.08;
-      // after the yawp the books go back into the void
-      let y = rig.ySlot;
-      if (yawpAt !== null) {
-        const sk = ease(clamp01((now - yawpAt - SINK_START) / SINK));
-        x -= sk * 6; y -= sk * 0.6;
-      }
-      rig.group.position.set(x, y, rig.group.position.z);
-      rig.group.updateMatrixWorld(true); // the light must leave the page where the page IS — even in a catch-up frame
+      rig.group.updateMatrixWorld(true);             // the light must leave the page where the page IS — even in a catch-up frame
       let changed = false;
-      rig.lineT.forEach((L, li) => {
-        const n = Math.max(0, Math.min(L.chars, Math.floor((u - L.start) * (reduceMotion ? CPS * 3 : CPS))));
-        if (n !== rig.typed[li]) { rig.typed[li] = n; changed = true; }
-        if (u >= L.end && !rig.fired[li]) { // catch-up safe: fires once, even after a long frame gap
-          rig.fired[li] = true; rig.typed[li] = L.chars; changed = true;
+      rig.lineT.forEach((Lt, li) => {
+        const k = Math.max(0, Math.min(Lt.chars, Math.floor((u - Lt.start) * (reduceMotion ? CPS * 3 : CPS))));
+        if (k !== rig.typed[li]) { rig.typed[li] = k; changed = true; }
+        if (u >= Lt.end && !rig.fired[li]) {         // catch-up safe: fires once, even after a long frame gap
+          rig.fired[li] = true; rig.typed[li] = Lt.chars; changed = true;
           onLine && onLine(rig.book, li, rig.book.lines[li]);
           emitLine(rig, li, now);
         }
@@ -341,34 +414,33 @@ export function initVoid(container, {
     // hold for the yawp
     if (!holding && yawpAt === null && u >= HOLD_AT && !held) {
       holding = true; held = true; holdStart = now;
-      window.addEventListener('keydown', onGesture); window.addEventListener('pointerdown', onGesture);
+      armHold(true);
       onHold && onHold();
       if (autoYawp) setTimeout(yawp, 900);
     }
 
     // the light
     gathered = 0;
-    const ty = yawpAt === null ? -1 : now - yawpAt;
     for (let i = 0; i < used; i++) {
-      const p = P[i]; let k = clamp01((now - p.t0) / p.dur);
+      const p = P[i]; const k = clamp01((now - p.t0) / p.dur);
       let x, y, z;
-      if (ty >= FOLD_START) { // fold: from wherever it is to its place on an edge
+      if (ty >= FOLD_START) {                          // fold: from wherever it is to its place on an edge
         const f = ease(clamp01((ty - FOLD_START) / FOLD));
         edgePoint(p.edge, p.s, tmpV);
-        const spin = now * 0.35; // the cube turns slowly, as the seed will
+        const spin = now * 0.35;                       // the cube turns slowly, as the seed will
         const rx = tmpV.x * Math.cos(spin) - tmpV.z * Math.sin(spin), rz = tmpV.x * Math.sin(spin) + tmpV.z * Math.cos(spin);
         const ex = POINT.x + rx, ey = POINT.y + tmpV.y, ez = POINT.z + rz;
         if (!p.foldFrom) p.foldFrom = [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]];
         x = p.foldFrom[0] + (ex - p.foldFrom[0]) * f; y = p.foldFrom[1] + (ey - p.foldFrom[1]) * f; z = p.foldFrom[2] + (ez - p.foldFrom[2]) * f;
         tmpC.copy(blue).lerp(white, 0.35 * f);
-      } else if (k < 1) { // in flight: page → point, on a gentle arc
+      } else if (k < 1) {                              // in flight: page → point, on a gentle arc
         const e = ease(k);
-        const a = Math.sin(Math.PI * k) * p.arc;
-        x = p.sx + (POINT.x + p.jx - p.sx) * e + a * 0.4;
+        const arc = Math.sin(Math.PI * k) * p.arc;
+        x = p.sx + (POINT.x + p.jx - p.sx) * e + arc * 0.4;
         y = p.sy + (POINT.y + p.jy - p.sy) * e + Math.sin(Math.PI * k) * 0.35;
-        z = p.sz + (POINT.z + p.jz - p.sz) * e - a * 0.2;
+        z = p.sz + (POINT.z + p.jz - p.sz) * e - arc * 0.2;
         tmpC.copy(warm).lerp(blue, e);
-      } else { // gathered: a slow swirl around the point; jolted by the yawp
+      } else {                                         // gathered: a slow swirl around the point; jolted by the yawp
         gathered++;
         const ang = now * p.spin, jolt = ty >= 0 && ty < SHOCK ? 1 + Math.sin(Math.PI * clamp01(ty / SHOCK)) * 2.2 : 1;
         const cx = p.jx * Math.cos(ang) - p.jz * Math.sin(ang), cz = p.jx * Math.sin(ang) + p.jz * Math.cos(ang);
@@ -385,33 +457,38 @@ export function initVoid(container, {
     const pulse = 1 + Math.sin(now * 2 * Math.PI) * 0.06; // 60 BPM — rest
     orb.scale.setScalar((0.35 + g * 1.3) * pulse);
     pointLight.intensity = 6 + g * 26;
-    core.material.color.setRGB(1, 1, 1);
 
     // the yawp
+    ring.material.opacity = 0; cube.material.opacity = 0; inner.material.opacity = 0;
     if (ty >= 0) {
-      const s = clamp01(ty / SHOCK);
-      ring.scale.setScalar(0.05 + ease(s) * 14);
-      ring.material.opacity = (1 - s) * 0.9;
+      const sh = clamp01(ty / SHOCK);
+      ring.scale.setScalar(0.05 + ease(sh) * 14);
+      ring.material.opacity = (1 - sh) * 0.9;
       ring.lookAt(camera.position);
-      const c = clamp01((ty - CUBE_IN) / CUBE_FADE);
-      cube.material.opacity = c * 0.9; inner.material.opacity = c * 0.6;
+      const cf = clamp01((ty - CUBE_IN) / CUBE_FADE);
+      cube.material.opacity = cf * 0.9; inner.material.opacity = cf * 0.6;
       cubeGroup.rotation.y = now * 0.35; cubeGroup.rotation.x = Math.sin(now * 0.2) * 0.15;
-      orb.scale.setScalar((0.35 + g * 1.3) * pulse * (1 - 0.6 * c));
+      orb.scale.setScalar((0.35 + g * 1.3) * pulse * (1 - 0.6 * cf));
       if (ty >= FOLD_START + FOLD && !foldFired) { foldFired = true; onFold && onFold(); }
       if (ty >= DONE_AT && !done) { done = true; onDone && onDone(); }
     }
 
-    dir.update(holding ? HOLD_AT : Math.min(u, HOLD_AT + (ty > 0 ? ty : 0)));
+    const shown = holding ? HOLD_AT : (ty > 0 ? HOLD_AT + Math.min(ty, DONE_AT) : Math.min(u, HOLD_AT));
+    onTime && onTime(shown, holding);
+    dir.update(shown);
     renderer.render(scene, camera);
   }
   raf = requestAnimationFrame(frame);
 
-  return function dispose() {
-    cancelAnimationFrame(raf);
-    window.removeEventListener('resize', resize);
-    window.removeEventListener('keydown', onGesture); window.removeEventListener('pointerdown', onGesture);
-    dir.dispose();
-    renderer.dispose();
-    if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
+  return {
+    seek, marks, duration: DURATION, holdAt: HOLD_AT,
+    dispose() {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      armHold(false);
+      dir.dispose();
+      renderer.dispose();
+      if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
+    },
   };
 }

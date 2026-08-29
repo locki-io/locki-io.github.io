@@ -26,6 +26,36 @@
       @keyframes breathe { 0%, 100% { opacity: .35 } 50% { opacity: .95 } }
       body.leaving::after { content: ""; position: absolute; inset: 0; background: #07070c; animation: fade .9s ease forwards; }
       @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+      /* the timeline: above the title — scrub the act forward or back */
+      .timeline { position: absolute; left: 5vw; top: 2.6vh; width: 38vw; user-select: none; -webkit-user-select: none; touch-action: none; }
+      .tl-track { position: relative; height: 16px; cursor: pointer; }
+      .tl-track::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: rgba(255,255,255,.16); }
+      .tl-fill { position: absolute; left: 0; top: 7px; height: 2px; width: 0; background: #ffb8a8; }
+      .tl-knob { position: absolute; top: 3px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #ffd0c8; transform: translateX(-50%);
+                 box-shadow: 0 0 8px rgba(255,184,168,.6); }
+      .tl-marks { position: relative; height: 26px; }
+      .tl-mark:nth-child(even) { top: 12px; }
+      .tl-mark:nth-child(even)::before { height: 18px; top: -21px; }
+      .tl-mark { position: absolute; top: 0; transform: translateX(-50%); font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+                 color: rgba(255,255,255,.38); white-space: nowrap; pointer-events: none; }
+      .tl-mark::before { content: ""; position: absolute; left: 50%; top: -9px; width: 1px; height: 6px; background: rgba(255,255,255,.35); }
+      .tl-mark.yawp { color: #ffb8a8; }
+      .tl-mark.on { color: rgba(255,255,255,.85); }
+      .title { top: 9.5vh; }
+      /* a phone: the orbit above, the stream below */
+      @media (max-aspect-ratio: 1/1) {
+        .timeline { width: 90vw; }
+        .title { top: 10.5vh; }
+        body.holding .stream li { opacity: .12; }
+        .stream li { overflow-wrap: anywhere; }
+        .hold { bottom: 12vh; }
+        .tl-mark { font-size: 8px; letter-spacing: .06em; }
+        .title h1 { font-size: 18px; }
+        .stream { top: auto; bottom: 4vh; left: 5vw; right: auto; width: 90vw; transform: none; max-width: 90vw; max-height: 34vh; overflow: hidden; box-sizing: border-box;
+                  display: flex; flex-direction: column; justify-content: flex-end; font-size: 12px; line-height: 1.7; }
+        .hold { font-size: 11px; letter-spacing: .18em; }
+        .hold b { font-size: 22px; }
+      }
       .director { position: absolute; left: 5vw; bottom: 5vh; max-width: 46vw; font-size: 12px; line-height: 1.6;
                   color: #ffd0c8; background: rgba(20,10,14,.7); border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
       .director kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
@@ -34,6 +64,10 @@
   </head>
   <body>
     <div id="void" aria-hidden="true"></div>
+    <div id="timeline" class="timeline" aria-label="timeline of the act">
+      <div class="tl-track"><div class="tl-fill"></div><div class="tl-knob"></div></div>
+      <div class="tl-marks"></div>
+    </div>
     <div class="title">
       <h1>Before the seed, four books.</h1>
       <p>Act 0 · void → 0</p>
