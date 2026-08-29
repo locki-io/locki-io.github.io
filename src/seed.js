@@ -24,8 +24,19 @@ async function start() {
   } catch (e) { /* the seed still breathes once, and says its name */ }
 
   const list = document.getElementById('stream');
+  const director = new URLSearchParams(location.search).has('director');
+  let cameraPath = null;
+  try { const r = await fetch('/camera/seed.json'); if (r.ok) cameraPath = await r.json(); } catch (e) {}
+  const hud = document.getElementById('director');
+  if (director) hud.hidden = false;
   initSeed(document.getElementById('seed'), {
     stream,
+    director,
+    cameraPath: director ? null : cameraPath,
+    onKeyframes: (keys, what) => {
+      document.getElementById('keycount').textContent = `${keys.length} keyframe${keys.length === 1 ? '' : 's'} · ${what}`;
+      document.getElementById('keys').textContent = JSON.stringify(keys);
+    },
     onBeat: (i, line) => {
       const li = document.createElement('li');
       li.textContent = line;

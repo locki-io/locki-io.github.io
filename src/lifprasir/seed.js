@@ -16,13 +16,19 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const BREATH_PERIOD = 50 / 24;  // one baked breath: 50 frames at Blender's 24 fps ≈ 2.08 s
 const COLLAPSE_SECONDS = 1.8;
 const BIRTH_SECONDS = 6.0;      // slowly
 const THREAD_HEIGHT = 60;       // far past the top of the frame — it goes to the tree
 
-export function initSeed(container, { stream = [], onBeat, onCollapse, onBirth } = {}) {
+export function initSeed(container, {
+  stream = [], onBeat, onCollapse, onBirth,
+  director = false,   // operator mode: orbit the camera, capture keyframes (K), export the path (E)
+  cameraPath = null,  // [{ u, position:[x,y,z], target:[x,y,z] }] — played along the timeline when present
+  onKeyframes,        // director HUD callback
+} = {}) {
   if (!container) return () => {};
   const reduceMotion =
     window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -34,11 +40,65 @@ export function initSeed(container, { stream = [], onBeat, onCollapse, onBirth }
   );
   camera.position.set(0, 1.2, 13.5);
   camera.lookAt(0, 1.5, 0);
+  const lookTarget = new THREE.Vector3(0, 1.5, 0);
+
+  // --- director mode: the operator sets the orbit -----------------------------
+  // Orbit with the mouse; K captures {u, position, target}; E exports the path.
+  // The exported JSON lands in public/camera/<act>.json and becomes DATA the act
+  // plays back — the camera path is authored by a human hand, then versioned.
+  let controls = null;
+  const keyframes = [];
+  let currentU = 0;
+  function onKey(e) {
+    if (!controls) return;
+    if (e.key === 'k' || e.key === 'K') {
+      keyframes.push({
+        u: +currentU.toFixed(2),
+        position: camera.position.toArray().map((v) => +v.toFixed(3)),
+        target: controls.target.toArray().map((v) => +v.toFixed(3)),
+      });
+      keyframes.sort((a, b) => a.u - b.u);
+      onKeyframes && onKeyframes(keyframes, 'captured');
+    } else if (e.key === 'e' || e.key === 'E') {
+      const json = JSON.stringify(keyframes, null, 2);
+      console.log('%ccamera path — save as public/camera/seed.json', 'color:#ffb8a8;font-weight:bold');
+      console.log(json);
+      if (navigator.clipboard) navigator.clipboard.writeText(json).catch(() => {});
+      onKeyframes && onKeyframes(keyframes, 'exported');
+    }
+  }
+  function applyCameraPath(u) {
+    const p = cameraPath;
+    if (!p || !p.length) return;
+    if (u <= p[0].u) { setCam(p[0]); return; }
+    if (u >= p[p.length - 1].u) { setCam(p[p.length - 1]); return; }
+    let i = 0; while (u > p[i + 1].u) i++;
+    const a = p[i], b = p[i + 1];
+    const k = (u - a.u) / Math.max(1e-6, b.u - a.u);
+    const e = k * k * (3 - 2 * k); // smoothstep between two human-set keys
+    camera.position.set(
+      a.position[0] + (b.position[0] - a.position[0]) * e,
+      a.position[1] + (b.position[1] - a.position[1]) * e,
+      a.position[2] + (b.position[2] - a.position[2]) * e);
+    lookTarget.set(
+      a.target[0] + (b.target[0] - a.target[0]) * e,
+      a.target[1] + (b.target[1] - a.target[1]) * e,
+      a.target[2] + (b.target[2] - a.target[2]) * e);
+    camera.lookAt(lookTarget);
+  }
+  function setCam(kf) { camera.position.fromArray(kf.position); lookTarget.fromArray(kf.target); camera.lookAt(lookTarget); }
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
+  if (director) {
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.copy(lookTarget);
+    controls.enableDamping = true;
+    window.addEventListener('keydown', onKey);
+    onKeyframes && onKeyframes(keyframes, 'ready');
+  }
 
   scene.add(new THREE.AmbientLight(0x2233ff, 0.7));
   const coreLight = new THREE.PointLight(0xffffff, 40, 40);
@@ -160,7 +220,9 @@ export function initSeed(container, { stream = [], onBeat, onCollapse, onBirth }
     const dt = clock.getDelta();
     const t = clock.elapsedTime;
     if (mixer) mixer.update(dt);
-    if (t0 !== null) setState(t - t0);
+    if (t0 !== null) { currentU = t - t0; setState(currentU); }
+    if (controls) controls.update();               // the operator's hand
+    else if (t0 !== null) applyCameraPath(currentU); // the authored path, as data
     renderer.render(scene, camera);
     raf = requestAnimationFrame(frame);
   }
@@ -176,6 +238,8 @@ export function initSeed(container, { stream = [], onBeat, onCollapse, onBirth }
   return function dispose() {
     cancelAnimationFrame(raf);
     window.removeEventListener('resize', onResize);
+    window.removeEventListener('keydown', onKey);
+    if (controls) controls.dispose();
     renderer.dispose();
     renderer.domElement.remove();
   };

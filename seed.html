@@ -19,6 +19,10 @@
       body.collapsed .stream { color: #c8d0ff; }
       body.born .stream li { opacity: .35; }
       body.born .title p::after { content: " · the thread is born"; opacity: .8; }
+      .director { position: absolute; left: 5vw; bottom: 5vh; max-width: 46vw; font-size: 12px; line-height: 1.6;
+                  color: #ffd0c8; background: rgba(20,10,14,.7); border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
+      .director kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
+      .director pre { margin: .4em 0 0; max-height: 18vh; overflow: auto; font-size: 10px; opacity: .7; white-space: pre-wrap; }
     </style>
   </head>
   <body>
@@ -28,6 +32,11 @@
       <p>Act I · the seed</p>
     </div>
     <ol id="stream" class="stream" aria-label="the seed's mint record"></ol>
+    <aside id="director" class="director" hidden>
+      <b>director</b> — orbit with the mouse · <kbd>K</kbd> capture keyframe at the current moment · <kbd>E</kbd> export path (console + clipboard) → save as <code>public/camera/seed.json</code>
+      <div id="keycount">0 keyframes</div>
+      <pre id="keys"></pre>
+    </aside>
     <script type="module" src="/src/seed.js"></script>
   </body>
 </html>
