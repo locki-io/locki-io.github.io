@@ -9,7 +9,7 @@ export default {
   build: {
     rollupOptions: {
       // multi-page: the homepage, and the Act I stage where the seed is grown
-      input: { main: 'index.html', seed: 'seed.html', void: 'void.html' },
+      input: { main: 'index.html', seed: 'seed.html', void: 'void.html', logo: 'logo.html' },
     },
   },
 };

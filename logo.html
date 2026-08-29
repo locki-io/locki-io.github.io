@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>O C — the loop that will not close itself</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #000; color: #e8e8f0; font-family: Roboto, system-ui, sans-serif; overflow: hidden; }
+      #logo { position: absolute; inset: 0; }
+      .title { position: absolute; left: 5vw; top: 6vh; pointer-events: none; }
+      .title h1 { font-weight: 300; letter-spacing: .08em; font-size: clamp(18px, 2.2vw, 28px); margin: 0; opacity: .9; }
+      .title p { margin: .4em 0 0; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; opacity: .45; }
+      .stream { position: absolute; right: 5vw; top: 50%; transform: translateY(-50%); margin: 0; padding: 0; list-style: none; max-width: 34vw;
+                font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; line-height: 1.9; text-align: right; color: #f0d9b0; pointer-events: none; }
+      .stream li { opacity: 0; transform: translateX(12px); transition: opacity .9s ease, transform .9s ease; }
+      .stream li.on { opacity: .85; transform: none; }
+      .stream li.math { color: #9fb0ff; font-size: 11px; letter-spacing: .08em; }
+      .hold { position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%); text-align: center; pointer-events: none;
+              font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: #ffd0c8; opacity: 0; animation: breathe 2.2s ease-in-out infinite; }
+      .hold b { display: block; font-size: 22px; letter-spacing: .3em; margin-bottom: .3em; }
+      @keyframes breathe { 0%, 100% { opacity: .35 } 50% { opacity: .95 } }
+      @media (max-aspect-ratio: 1/1) { .stream { top: auto; bottom: 4vh; left: 5vw; right: auto; width: 90vw; max-width: 90vw; transform: none; font-size: 12px; } .hold { bottom: 30vh; } }
+      .director { position: absolute; left: 5vw; bottom: 5vh; max-width: 46vw; font-size: 12px; line-height: 1.6;
+                  color: #ffd0c8; background: rgba(20,10,14,.7); border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
+      .director kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
+      .director pre { margin: .4em 0 0; max-height: 18vh; overflow: auto; font-size: 10px; opacity: .7; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div id="logo" aria-hidden="true"></div>
+    <div class="title">
+      <h1>O C</h1>
+      <p>the double torus · the loop that will not close itself</p>
+    </div>
+    <ol id="stream" class="stream" aria-label="what the loop says"></ol>
+    <div id="hold" class="hold" hidden aria-live="polite">
+      <b>HUMAN IN THE LOOP</b>
+      the thread stopped at the gap — close it · any key, or touch
+    </div>
+    <aside id="director" class="director" hidden>
+      <b>director</b> — orbit with the mouse · <kbd>K</kbd> capture keyframe · <kbd>E</kbd> export path → <code>public/camera/logo.json</code>
+      <div id="keycount">0 keyframes</div>
+      <pre id="keys"></pre>
+    </aside>
+    <script type="module" src="/src/logo.js"></script>
+  </body>
+</html>
