@@ -14,7 +14,7 @@ async function start() {
   const list = document.getElementById('stream');
   const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
   const h1 = document.querySelector('.title h1');
-  if (h1 && books.length) h1.textContent = `Before the seed, ${words[books.length] || books.length} books.`;
+  if (h1 && books.length) h1.textContent = `On the shoulders of giants — ${words[books.length] || books.length} books.`;
   const hud = document.getElementById('director');
   const hold = document.getElementById('hold');
   if (director) hud.hidden = false;
@@ -50,7 +50,7 @@ async function start() {
   const tl = document.getElementById('timeline'), fill = tl.querySelector('.tl-fill'), knob = tl.querySelector('.tl-knob'), marksEl = tl.querySelector('.tl-marks');
   const track = tl.querySelector('.tl-track');
   const marks = api.marks.map((m) => {
-    const el = document.createElement('div'); el.className = 'tl-mark' + (m.id === 'yawp' ? ' yawp' : ''); el.textContent = m.label.split(' ').pop();
+    const el = document.createElement('div'); el.className = 'tl-mark' + (m.id === 'yawp' ? ' yawp' : ''); el.textContent = (m.year ? m.year + ' ' : '') + m.label.split(' ').pop();
     el.style.left = (100 * m.u / api.duration) + '%'; marksEl.appendChild(el); return { ...m, el };
   });
   let lastPct = -1;

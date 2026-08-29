@@ -228,7 +228,7 @@ export function initVoid(container, {
   });
   const HOLD_AT = t;
   const DURATION = HOLD_AT + DONE_AT;                 // the whole act, yawp included, for the timeline bar
-  const marks = rigs.map((rig) => ({ u: rig.tArrive, id: rig.book.id, label: rig.book.author })).concat([{ u: HOLD_AT, id: 'yawp', label: 'yawp' }]);
+  const marks = rigs.map((rig) => ({ u: rig.tArrive, id: rig.book.id, label: rig.book.author, year: rig.book.year })).concat([{ u: HOLD_AT, id: 'yawp', label: 'yawp', year: null }]);
   let START = startAt === 'hold' ? Math.max(0, HOLD_AT - 1) : Math.max(0, +startAt || 0);
 
   // --- the light: one pool of points, budgeted per line -----------------------
