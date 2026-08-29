@@ -20,8 +20,17 @@ const CONFIG = {
   lengthDecay: 0.76, // each generation is shorter
   radiusDecay: 0.7, // ...and thinner
   branchAngle: 0.62, // radians a child tilts away from its parent (~35°)
-  bpm: 50, // calm pulse. Excitement would quicken it.
+  bpm: 60, // REST — a human heart at rest beats once a second (operator canon, forge #3). Activity raises it; nothing lowers it.
+  bpmHumanMax: 220, // the human ceiling. Above it is the augmented self — human + agents — and the page may say so.
 };
+
+// The heart's scale (forge #3): density 0 → REST (60), density 1 → the human
+// ceiling (220). A density above 1 is the augmented self — the realm, human +
+// agents, beating past what a body alone can do. Not yet fed by data; the
+// mapping is here so the data has somewhere honest to land.
+export function bpmFromDensity(d) {
+  return CONFIG.bpm + Math.max(0, d) * (CONFIG.bpmHumanMax - CONFIG.bpm);
+}
 
 // Deterministic pseudo-randomness so the tree is the SAME tree every load —
 // a thread that persists. No Math.random: the pattern is fixed, like a memory.

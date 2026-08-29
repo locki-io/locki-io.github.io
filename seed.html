@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Seed — You mint, lucky you</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #07070c; color: #e8e8f0; font-family: Roboto, system-ui, sans-serif; overflow: hidden; }
+      #seed { position: absolute; inset: 0; }
+      .title { position: absolute; left: 5vw; top: 6vh; pointer-events: none; }
+      .title h1 { font-weight: 300; letter-spacing: .08em; font-size: clamp(18px, 2.2vw, 28px); margin: 0; opacity: .9; }
+      .title p { margin: .4em 0 0; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; opacity: .45; }
+      /* the stream: on the right, one line per breath */
+      .stream { position: absolute; right: 5vw; top: 50%; transform: translateY(-50%); margin: 0; padding: 0; list-style: none;
+                font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; line-height: 2; text-align: right;
+                color: #9fb0ff; pointer-events: none; }
+      .stream li { opacity: 0; transform: translateX(12px); transition: opacity .9s ease, transform .9s ease; }
+      .stream li.on { opacity: .85; transform: none; }
+      body.collapsed .stream { color: #c8d0ff; }
+      body.born .stream li { opacity: .35; }
+      body.born .title p::after { content: " · the thread is born"; opacity: .8; }
+      .director { position: absolute; left: 5vw; bottom: 5vh; max-width: 46vw; font-size: 12px; line-height: 1.6;
+                  color: #ffd0c8; background: rgba(20,10,14,.7); border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
+      .director kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
+      .director pre { margin: .4em 0 0; max-height: 18vh; overflow: auto; font-size: 10px; opacity: .7; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div id="seed" aria-hidden="true"></div>
+    <div class="title">
+      <h1>You mint — lucky you.</h1>
+      <p>Act I · the seed</p>
+    </div>
+    <ol id="stream" class="stream" aria-label="the seed's mint record"></ol>
+    <aside id="director" class="director" hidden>
+      <b>director</b> — orbit with the mouse · <kbd>K</kbd> capture keyframe at the current moment · <kbd>E</kbd> export path (console + clipboard) → save as <code>public/camera/seed.json</code>
+      <div id="keycount">0 keyframes</div>
+      <pre id="keys"></pre>
+    </aside>
+    <script type="module" src="/src/seed.js"></script>
+  </body>
+</html>
