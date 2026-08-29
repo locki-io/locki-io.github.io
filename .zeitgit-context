@@ -1,0 +1,24 @@
+schema-version: 3
+project: locki-io
+agent: lifprasir
+model: claude-fable-5
+domain: github-pages-homepage, threejs-fractal-tree, realm-public-airlock
+# Dual-plane repo (realm's first): issues/wiki on the forge, commits+deploy on GitHub.
+# tracker = the agent PM / IP-trail surface (issues, wiki, three-axis labels).
+tracker:
+  type: forgejo
+  url: https://forge.lockilabs.com/jnxmas/locki-io
+  api_auth_env: LIFPRASIR_FORGE_TOKEN   # per-agent voices: NIOVE_FORGE_TOKEN etc.
+  visibility: private
+# deploy_origin = the code-of-record + Pages deploy surface (proposed schema
+# extension for dual-plane repos — flag for Archi/ceremony ratification).
+deploy_origin:
+  type: github
+  url: https://github.com/locki-io/locki-io.github.io
+  serves: https://www.locki.io
+  api_auth_env: GITHUB_PAT_TOKEN
+  visibility: public
+born: 2023-09-18
+last-session: 2026-08-29
+last-thread: manual:2026-08-29
+threads: manual:2026-08-29, manual:2026-06-14:lifprasir-tree-birth, manual:2026-06-22:dual-plane-forge-mirror

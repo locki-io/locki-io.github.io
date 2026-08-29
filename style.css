@@ -58,6 +58,23 @@ html {
   overflow: hidden;
 }
 
+/* Lífþrasir — the Red Thread fractal tree, glowing behind the hero content.
+   .intro-section gets its own stacking context via isolation only — no layout
+   or positioning change, so its absolutely-positioned children (the milestone
+   circles) keep their original containing block. The canvas sits at z-index -1:
+   above the section's background photo, below every piece of in-flow content.
+   Never intercepts clicks or scroll. */
+.intro-section {
+  isolation: isolate;
+}
+
+.lifprasir-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
 .intro-section .header-container {
   padding-top: 40px;
   display: flex;

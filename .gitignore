@@ -25,3 +25,15 @@ dist-ssr
 
 .yarnrc.yml
 .yarn/*
+
+# Vaettir realm discipline (free-electron conformance, 2026-06-14)
+.env
+.env.*
+PRIVATE_*
+.venv/
+# .forseti/ — per-host sovereign key registry, NEVER committed
+.forseti/
+# /locki — airlock door symlink, anchored to root
+/locki
+# project/ — internal governance; gitignored on PUBLIC repos (root law)
+project/
