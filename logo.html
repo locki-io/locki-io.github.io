@@ -15,7 +15,7 @@
       .stream li { opacity: 0; transform: translateX(12px); transition: opacity .9s ease, transform .9s ease; }
       .stream li.on { opacity: .85; transform: none; }
       .stream li.math { color: #9fb0ff; font-size: 11px; letter-spacing: .08em; }
-      .hold { position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%); text-align: center; pointer-events: none;
+      .hold { position: absolute; left: 50%; bottom: 17vh; transform: translateX(-50%); text-align: center; pointer-events: none;
               font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: #ffd0c8; opacity: 0; animation: breathe 2.2s ease-in-out infinite; }
       .hold b { display: block; font-size: 22px; letter-spacing: .3em; margin-bottom: .3em; }
       @keyframes breathe { 0%, 100% { opacity: .35 } 50% { opacity: .95 } }
@@ -41,7 +41,7 @@
       the thread stopped at the gap — close it · any key, or touch
     </div>
     <div class="knob">
-      distance between the centres · <kbd>+</kbd> <kbd>−</kbd> (or the slider)
+      distance between the centres · <kbd>+</kbd> <kbd>−</kbd>
       <input id="dist" type="range" min="0" max="4.2" step="0.01" value="3.2" aria-label="distance between the two centres" />
       <b id="distval">d = 3.20 · 2.00 R · 6.40 r</b>
     </div>

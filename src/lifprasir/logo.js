@@ -62,10 +62,17 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   setGap(GAP);
 
   // --- the cube that was subtracted: the seed, sitting in the gap ----------------
-  const cubeMat = new THREE.LineBasicMaterial({ color: 0x8fc6ff, transparent: true, opacity: 0.95 });
-  const cube = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE, CUBE, CUBE)), cubeMat);
-  const inner = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * 0.5, CUBE * 0.5, CUBE * 0.5)), cubeMat.clone());
-  const cubeGroup = new THREE.Group(); cubeGroup.add(cube, inner); scene.add(cubeGroup);
+  // the tesseract's blue — power — nested, as the seed is: faces and edges, the inner cube inside the outer
+  const cubeGroup = new THREE.Group(); scene.add(cubeGroup);
+  const cubeMats = [];
+  [1, 0.5, 0.25].forEach((k) => {
+    const faces = new THREE.MeshBasicMaterial({ color: 0x1b2bff, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide });
+    const edges = new THREE.LineBasicMaterial({ color: 0x5f7dff, transparent: true, opacity: 0.95 });
+    cubeMats.push(faces, edges);
+    cubeGroup.add(new THREE.Mesh(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k), faces));
+    cubeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k)), edges));
+  });
+  const cubeBase = cubeMats.map((m) => m.opacity);
   setDistance(dist);
 
   // --- the flow: a spark on the two circles ----------------------------------------
@@ -120,7 +127,7 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
     } else {
       const k = ease(clamp01((now - closeAt) / CLOSE_SECONDS));
       setGap(GAP * (1 - k));                                                // the C closes into an O; the cube is taken back into the tube
-      cubeMat.opacity = 1 - k; inner.material.opacity = (1 - k) * 0.7; cubeGroup.scale.setScalar(1 - 0.35 * k); cubeGroup.rotation.y = k * Math.PI / 2;
+      cubeMats.forEach((m, i) => { m.opacity = cubeBase[i] * (1 - k); }); cubeGroup.scale.setScalar(1 - 0.35 * k); cubeGroup.rotation.y = k * Math.PI / 2;
       const gone = now - closeAt - CLOSE_SECONDS;
       f = gone < 0 ? GAP_AT : GAP_AT + gone / LAP_SECONDS;                  // and the spark runs ∞
       if (!closed && gone > 0 && f >= 1) { closed = true; onClosed && onClosed(); }
