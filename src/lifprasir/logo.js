@@ -18,7 +18,7 @@ import * as THREE from 'three';
 import { createDirector } from './director.js';
 
 const R = 1.6, r = 0.5;                 // major and minor radii, both tori
-const DIST = R;                         // default distance between the two centres (operator: R); live-adjustable — setDistance(d)
+const DIST = 2 * R;                     // the distance between the two centres: 2R — the tubes share one cross-section, "friction in the middle" (operator, 2026-08-29); live-adjustable — setDistance(d)
 const CUBE = 2 * r * 0.92;              // the subtracted cube: the tube's diameter, almost
 const GAP = (CUBE * 1.25) / R;          // the arc the cube took out of the C (radians)
 const JOIN = 0.22;                      // radians: the spark blends from one circle to the other over this window at the neck
