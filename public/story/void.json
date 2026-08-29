@@ -1,0 +1,84 @@
+{
+  "act": "0",
+  "title": "void → 0",
+  "rule": "every line a quote; source: and consent: travel with it. Lines are the books' own words — read from the operator's shelf, or from the public text. A missing cover gets a dark cover with the title in light.",
+  "books": [
+    {
+      "id": "goldratt",
+      "author": "Eliyahu M. Goldratt",
+      "title": "Le But",
+      "edition": "AFNOR éd. spéciale",
+      "cover": "/assets/books/goldratt.jpg",
+      "source": "The Goal (Goldratt & Cox, 1984), short attributed quotations; prologue to « Debout sur les épaules des géants », Le But, AFNOR édition spéciale — transcribed from the physical book by jnxmas, 2026-08-29",
+      "consent": "fair quotation, attributed",
+      "lines": [
+        "An hour lost at a bottleneck is an hour lost for the entire system.",
+        "Tell me how you measure me, and I will tell you how I will behave.",
+        "La bonne définition d'un but est celle qui nous met sur le chemin de l'amélioration continue.",
+        "Pour atteindre un tel but, une percée décisive ne suffit pas. En fait, il en faut beaucoup.",
+        "Vingt-cinq ans après avoir écrit Le But, le Dr Goldratt écrivait « Debout sur les épaules des géants »."
+      ]
+    },
+    {
+      "id": "whitman",
+      "author": "Walt Whitman",
+      "title": "Leaves of Grass",
+      "edition": "Feuilles d'herbe, 1855",
+      "cover": "/assets/books/whitman.jpg",
+      "source": "Song of Myself and the Preface, Leaves of Grass (1855) — public domain; read from the Feuilles d'herbe edition (trad. Éric Athenot) on the operator's shelf",
+      "consent": "public domain",
+      "note": "jnxmas, 2026-08-29: and this works for any western country, still now.",
+      "lines": [
+        "I celebrate myself, and what I assume you shall assume,",
+        "For every atom belonging to me as good belongs to you.",
+        "America does not repel the past or what it has produced under its forms…",
+        "accepts the lesson with calmness…",
+        "I am large, I contain multitudes."
+      ]
+    },
+    {
+      "id": "gutteridge",
+      "author": "Lance Gutteridge",
+      "title": "Avoiding IT Disasters",
+      "edition": "the dedication",
+      "cover": "/assets/books/gutteridge.jpg",
+      "source": "Avoiding IT Disasters — cover subtitle and dedication, first page, transcribed from the physical book by jnxmas, 2026-08-29",
+      "consent": "fair quotation, attributed",
+      "lines": [
+        "Fallacies about enterprise systems, and how you can rise above them.",
+        "I dedicate this book to all the people who have been harmed by enterprise software systems;",
+        "you deserve better."
+      ]
+    },
+    {
+      "id": "nakamoto",
+      "author": "Satoshi Nakamoto",
+      "title": "Bitcoin: A Peer-to-Peer Electronic Cash System",
+      "edition": "the whitepaper, 2008",
+      "cover": "/assets/books/nakamoto.jpg",
+      "source": "Nakamoto, Bitcoin: A Peer-to-Peer Electronic Cash System (2008) — abstract and conclusion; the whitepaper is published under the MIT license",
+      "consent": "MIT license, attributed",
+      "note": "jnxmas, 2026-08-29: the paper that moved me into the magic of mathematics — how not to…",
+      "lines": [
+        "A purely peer-to-peer version of electronic cash would allow online payments to be sent directly from one party to another without going through a financial institution.",
+        "The network timestamps transactions by hashing them into an ongoing chain of hash-based proof-of-work, forming a record that cannot be changed without redoing the proof-of-work.",
+        "We have proposed a system for electronic transactions without relying on trust."
+      ]
+    },
+    {
+      "id": "keating",
+      "author": "John Keating",
+      "title": "Dead Poets Society",
+      "edition": "the teacher — he speaks Whitman",
+      "cover": "/assets/books/keating.jpg",
+      "source": "Whitman, O Me! O Life! and O Captain! My Captain! (public domain), as read by the character Keating; « Carpe diem » — Horace",
+      "consent": "public domain lines; the film is cited, not copied",
+      "lines": [
+        "Carpe diem.",
+        "O Captain! my Captain!",
+        "That the powerful play goes on, and you may contribute a verse.",
+        "What will your verse be?"
+      ]
+    }
+  ]
+}
