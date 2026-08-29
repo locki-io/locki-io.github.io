@@ -13,12 +13,10 @@ async function start() {
 
   push('two tori, joined along a neck — a surface of genus 2', 'math');
   push('from one of them, a cube was subtracted: the seed', 'math');
-  push('the thread rides over the O and under the C — it crosses the neck twice, at +z and −z', 'math');
-  push('a figure-eight that never meets itself');
+  push('one path runs both — a figure-eight the surface carries without meeting itself', 'math');
 
   initLogo(document.getElementById('logo'), {
     director, autoClose: params.has('autoclose'), startAt: parseFloat(params.get('t') || '0') || 0, closeSkip: parseFloat(params.get('cs') || '0') || 0,
-    showTori: !params.has('notori'), fat: parseFloat(params.get('fat') || '0') || 0, grow: parseFloat(params.get('grow') || '0') || 0,
     cameraPath: director ? null : cameraPath,
     onKeyframes: (keys, what) => { document.getElementById('keycount').textContent = `${keys.length} keyframe${keys.length === 1 ? '' : 's'} · ${what}`; document.getElementById('keys').textContent = JSON.stringify(keys); },
     onStop: () => { push('— and stops at the gap. The loop does not close itself.'); hold.hidden = false; },
