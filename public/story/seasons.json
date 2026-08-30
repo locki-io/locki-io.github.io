@@ -1,9 +1,19 @@
 {
   "source": "docs.locki.io — src/pages/index.js SEASONS[] (the airlock, read 2026-08-29); accents are the docs' own; Season 0 date corrected to October 2023 (operator, 2026-08-29)",
-  "rule": "the tori wear the current season's accent; the cube keeps the tesseract's blue in every season — the seed is the invariant, the surface is the weather",
+  "rule": "the tori wear the current season's accent; the cube keeps the tesseract's blue in every season — the seed is the invariant, the surface is the weather; the 'void' entry is the stage's own (forge #5) — before Season 0, the dew colour",
   "current": "ragnarok",
   "seed": "#1b2bff",
   "seasons": [
+    {
+      "id": "void",
+      "label": "Before",
+      "name": "On the shoulders of giants",
+      "date": "1855 → 2008",
+      "accent": "#dedede",
+      "emoji": "📖",
+      "stage": true,
+      "note": "the stage's own — Act 0, before any season has a colour (dew); not on docs.locki.io"
+    },
     {
       "id": "multiversx",
       "label": "Season 0",

@@ -106,7 +106,7 @@ export function initLogo(container, { director = false, cameraPath = null, onKey
   function closeLoop() { if (!stopped || closeWanted) return; closeWanted = true; onClose && onClose(); }
   function onGesture(e) {
     if (e.type === 'keydown' && (/^[+=\-_\[\]]$/.test(e.key) || (dir.active && /^[keKE]$/.test(e.key)))) return;   // the distance keys and the director's keys are not a hand on the loop
-    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.knob')) return;                  // nor is the slider
+    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.bar, .knobs')) return;                  // nor is the slider
     closeLoop();
   }
   function resize() { const w = container.clientWidth, h = container.clientHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }

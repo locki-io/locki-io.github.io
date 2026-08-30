@@ -85,3 +85,27 @@ html, body { margin: 0; height: 100%; background: #000; color: #e8e8f0; font-fam
   .ledger { right: 4vw; left: 4vw; max-width: none; bottom: 40vh; font-size: 10px; }
   .stream { max-height: 30vh; }
 }
+
+/* hidden, named: the knobs — an act's controls, bottom-left; the director moves up when both are out */
+.knobs { position: absolute; z-index: 3; left: 2.2vw; bottom: 4vh; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: #ffd0c8; opacity: .85; }
+.knobs input[type=range] { display: block; width: 28vw; margin: .4em 0 .3em; accent-color: var(--season); }
+.knobs b { color: #fff; letter-spacing: .05em; text-transform: none; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.knobs kbd { border: 1px solid rgba(255,208,200,.5); border-radius: 3px; padding: 0 .35em; }
+.stage.knobbed .director { bottom: 16vh; }
+
+/* the bar, dense: many marks (a season of repositories) stagger on three rows; ticks stay hoverable */
+.tl-mark.tick { pointer-events: auto; }
+.bar.dense { width: 46vw; } .bar.dense .tl-marks { height: 38px; }
+.bar.dense .tl-mark:nth-child(even) { top: 0; } .bar.dense .tl-mark:nth-child(even)::before { height: 6px; top: -9px; }
+.bar.dense .tl-mark:not(.tick):nth-of-type(3n+2) { top: 12px; } .bar.dense .tl-mark:not(.tick):nth-of-type(3n+2)::before { height: 18px; top: -21px; }
+.bar.dense .tl-mark:not(.tick):nth-of-type(3n) { top: 24px; } .bar.dense .tl-mark:not(.tick):nth-of-type(3n)::before { height: 30px; top: -33px; }
+
+/* act states — on the stage, never on body */
+.stage.yawped .stream, .stage.collapsed .stream { color: #c8d0ff; }
+.stage.born .stream li:not(.milerock):not(.head) { opacity: .35; }
+.stage.folded .stream li.book { color: #fff; }
+
+@media (max-aspect-ratio: 1/1) {
+  .knobs { left: 4vw; bottom: 40vh; } .knobs input[type=range] { width: 60vw; }
+  .stage.knobbed .director { bottom: 52vh; }
+}
