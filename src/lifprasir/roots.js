@@ -18,9 +18,9 @@ import { createDirector } from './director.js';
 
 const FLOOR_Y = 0.9;            // Act I's ground
 const BPM = 60;                 // the point at rest
-const R = 1.6, r = 0.5;         // the rings, as in the logo
-const DEEP = -14;               // where the ring rises from
-const BELOW = FLOOR_Y - 2.2;    // where it stays: under the ground, seen through it
+const R = 0.4, r = 0.125;       // the rings — a quarter of the logo's: the roots growing down are what matters next
+const DEEP = -10;               // where the ring rises from
+const BELOW = FLOOR_Y - 0.9;    // where it stays: under the ground, seen through it
 const DIST = 2 * R;             // the two centres, 2R apart — friction in the middle
 
 const ease = (s) => s * s * (3 - 2 * s);
@@ -62,6 +62,14 @@ export function initRoots(container, {
   floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; scene.add(floor);
   const pin = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowMap, color: 0xff3344, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
   pin.position.set(0, FLOOR_Y + 0.02, 0); scene.add(pin);
+  // the red thread — it does not leave: from the pin, straight up, out of the frame
+  const THREAD_H = 60;
+  const coreGeo = new THREE.CylinderGeometry(0.035, 0.035, THREAD_H, 12, 1, true); coreGeo.translate(0, THREAD_H / 2, 0);
+  const haloGeo = new THREE.CylinderGeometry(0.2, 0.2, THREAD_H, 16, 1, true); haloGeo.translate(0, THREAD_H / 2, 0);
+  const haloMat = new THREE.MeshBasicMaterial({ color: 0xff5a4a, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const thread = new THREE.Group();
+  thread.add(new THREE.Mesh(coreGeo, new THREE.MeshBasicMaterial({ color: 0xff2a3a })), new THREE.Mesh(haloGeo, haloMat));
+  thread.position.set(0, 0, 0); scene.add(thread);
   const GRASS = 700;
   const bladeGeo = new THREE.PlaneGeometry(0.05, 1, 1, 5);
   { const p = bladeGeo.attributes.position; for (let i = 0; i < p.count; i++) { const y = p.getY(i) + 0.5; p.setX(i, p.getX(i) * (1 - y * 0.85)); p.setZ(i, y * y * 0.35); p.setY(i, y); } bladeGeo.computeVertexNormals(); }
@@ -119,6 +127,7 @@ export function initRoots(container, {
     const pulse = 1 + Math.sin(now * 2 * Math.PI * BPM / 60) * 0.18;
     pin.scale.set(0.28 * pulse, 0.28 * pulse, 1);
     sway(now);
+    haloMat.opacity = 0.32 + 0.08 * Math.sin(now * 2 * Math.PI * BPM / 60);   // the thread at rest, one beat per second
 
     // one ring rises from the deep
     const rise = ease(clamp01((u - RISE_START) / (RISE_END - RISE_START)));
