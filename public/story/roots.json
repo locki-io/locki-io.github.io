@@ -2,17 +2,66 @@
   "act": "II",
   "name": "Act II · the roots — the opening",
   "season": "multiversx",
-  "rule": "every beat a datum; the season line reads seasons.json; the hold names the gesture. The roots — the humans — come next, with source: and consent:.",
+  "rule": "every beat a datum; the season line reads seasons.json; the hold names the gesture. The roots — the humans — come next, with source: and consent:. The ledger (element 7) ticks on beats with achieve:; entries from earlier acts arrive already ticked (ticked:).",
   "beats": [
-    { "u": 0.0,  "id": "point",  "mark": "the point",  "line": "the point where the thread pierces the ground — at rest, sixty to the minute", "cls": "head" },
-    { "u": 2.0,  "id": "rise",   "mark": "from below", "line": "from below, grey and white: dew, after the fire — before any season has a colour" },
-    { "u": 5.0,  "id": "one",                          "line": "one ring" },
-    { "u": 8.0,  "id": "divide", "mark": "one → two",  "line": "one becomes two — Líf, and Lífþrasir: the two who survived inside the tree", "cls": "door" },
-    { "u": 12.0, "id": "below",                        "line": "they stay under the ground, and hold it from beneath" },
-    { "u": 16.0, "id": "mark",   "mark": "the mark",   "line": "— and in the corner of the frame, recognised: the two rings, the C, the cube that was taken out. The mark.", "cls": "head" },
-    { "u": 20.0, "id": "hold",   "mark": "the roots" }
+    {
+      "u": 0.0,
+      "id": "point",
+      "mark": "the point",
+      "line": "the point where the thread pierces the ground — at rest, sixty to the minute",
+      "cls": "head"
+    },
+    {
+      "u": 2.0,
+      "id": "rise",
+      "mark": "from below",
+      "line": "from below, grey and white: dew, after the fire — before any season has a colour"
+    },
+    {
+      "u": 5.0,
+      "id": "one",
+      "line": "one ring"
+    },
+    {
+      "u": 8.0,
+      "id": "divide",
+      "mark": "one → two",
+      "line": "one becomes two — Líf, and Lífþrasir: the two who survived inside the tree",
+      "cls": "door",
+      "achieve": "divided"
+    },
+    {
+      "u": 12.0,
+      "id": "below",
+      "line": "they stay under the ground, and hold it from beneath"
+    },
+    {
+      "u": 16.0,
+      "id": "mark",
+      "mark": "the mark",
+      "line": "— and in the corner of the frame, recognised: the two rings, the C, the cube that was taken out. The mark.",
+      "cls": "head",
+      "achieve": [
+        "modular",
+        "learnings"
+      ]
+    },
+    {
+      "u": 20.0,
+      "id": "hold",
+      "mark": "the roots"
+    }
   ],
-  "hold": { "door": "The tree is held from beneath.", "verb": "the roots", "hint": "the humans come next · any key, or touch", "after": "— a hand. The roots grow from here." },
+  "hold": {
+    "door": "The tree is held from beneath.",
+    "verb": "the roots",
+    "hint": "the humans come next · any key, or touch",
+    "after": "— a hand. The roots grow from here."
+  },
   "source": "Vafþrúðnismál 45 — Líf and Lífþrasir, who hide in Hoddmímis holt and live on the morning dew; the realm's own reading (assets/myth.md)",
-  "consent": "the realm's own words"
+  "consent": "the realm's own words",
+  "ticked": [
+    "minted",
+    "milerock"
+  ]
 }

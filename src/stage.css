@@ -52,6 +52,17 @@ html, body { margin: 0; height: 100%; background: #000; color: #e8e8f0; font-fam
 .hold .verb { display: block; font-size: 26px; letter-spacing: .4em; margin-bottom: .3em; }
 @keyframes breathe { 0%, 100% { opacity: .35 } 50% { opacity: .95 } }
 
+/* 7 · the ledger — what remains; bottom-right, at most seven boxes */
+.ledger { position: absolute; z-index: 2; right: 2.2vw; bottom: 4vh; margin: 0; padding: 0; list-style: none; max-width: 30vw; text-align: right;
+          font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; line-height: 1.6; color: rgba(255,255,255,.72); pointer-events: none; }
+.ledger li { opacity: 0; transform: translateY(6px); transition: opacity .9s ease, transform .9s ease; margin-top: .35em; }
+.ledger li.on { opacity: 1; transform: none; }
+.ledger .box { display: inline-block; width: 1.2em; height: 1.2em; line-height: 1.2em; text-align: center; border: 1px solid color-mix(in srgb, var(--season) 70%, #fff); border-radius: 3px; margin-left: .6em; color: color-mix(in srgb, var(--season) 40%, #fff); font-size: 10px; vertical-align: middle; float: right; }
+.ledger .kind { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--season) 55%, #fff); margin-right: .6em; }
+.ledger .text { color: rgba(255,255,255,.8); }
+.ledger li.minted .text, .ledger li.milerock .text { color: #ffd0c8; }
+.stage.holding .ledger { opacity: .35; }
+
 /* hidden, named: the director */
 .director { position: absolute; z-index: 3; left: 2.2vw; bottom: 4vh; max-width: 46vw; font-size: 12px; line-height: 1.6; color: #ffd0c8; background: rgba(20,10,14,.7);
             border: 1px solid rgba(255,90,74,.35); border-radius: 8px; padding: .6em .9em; }
@@ -71,4 +82,6 @@ html, body { margin: 0; height: 100%; background: #000; color: #e8e8f0; font-fam
   .stage.holding .stream li { opacity: .12; }
   .hold { bottom: 12vh; font-size: 11px; letter-spacing: .18em; } .hold .verb { font-size: 22px; } .hold .door { font-size: 17px; }
   .tl-mark { font-size: 8px; letter-spacing: .06em; }
+  .ledger { right: 4vw; left: 4vw; max-width: none; bottom: 40vh; font-size: 10px; }
+  .stream { max-height: 30vh; }
 }

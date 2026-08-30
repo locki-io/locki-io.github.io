@@ -6,6 +6,7 @@
 //   4 the scene        the point of attention — the only element an act owns
 //   5 the stream       what is happening, one datum per beat
 //   6 the hold         the invitation — names the gesture, carries the door line
+//   7 the ledger       what remains — Muninn's: achievements and learnings, ticked by the acts' beats (public/story/ledger.json)
 //   hidden, named:     the director (orbit · K · E), the knobs, the handoff
 //
 // An act provides its scene and its data; everything else is mounted here, once.
@@ -18,8 +19,12 @@ export async function loadSeasons() {
   try { const r = await fetch('/story/seasons.json'); if (r.ok) return await r.json(); } catch (e) {}
   return null;
 }
+export async function loadLedger() {
+  try { const r = await fetch('/story/ledger.json'); if (r.ok) return await r.json(); } catch (e) {}
+  return null;
+}
 
-export function mountStage(root, { act = 'act', name = '', seasons = null, seasonId = null, logo = '/assets/pLogo_white.png', director = false } = {}) {
+export function mountStage(root, { act = 'act', name = '', seasons = null, seasonId = null, logo = '/assets/pLogo_white.png', director = false, ledger = null, ticked = [] } = {}) {
   root.classList.add('stage');
   root.innerHTML = '';
   const frame = el('div', 'frame');
@@ -29,8 +34,9 @@ export function mountStage(root, { act = 'act', name = '', seasons = null, seaso
   const scene = el('div', 'scene'); scene.setAttribute('aria-hidden', 'true');
   const stream = el('ol', 'stream'); stream.setAttribute('aria-label', 'what is happening');
   const hold = el('div', 'hold', `<div class="door"></div><b class="verb"></b><span class="hint"></span>`); hold.hidden = true; hold.setAttribute('aria-live', 'polite');
+  const ledgerEl = el('ol', 'ledger'); ledgerEl.setAttribute('aria-label', 'what remains');
   const hud = el('aside', 'director', `<b>director</b> — orbit with the mouse · <kbd>K</kbd> capture keyframe · <kbd>E</kbd> export path → <code>public/camera/${act}.json</code><div class="keycount">0 keyframes</div><pre class="keys"></pre>`); hud.hidden = !director;
-  frame.append(mark, bar, head, scene, stream, hold, hud);
+  frame.append(mark, bar, head, scene, stream, hold, ledgerEl, hud);
   root.append(frame);
 
   const seasonH = head.querySelector('.season'), actP = head.querySelector('.act');
@@ -58,6 +64,22 @@ export function mountStage(root, { act = 'act', name = '', seasons = null, seaso
   function hideHold() { hold.hidden = true; root.classList.remove('holding'); }
   function revealMark() { mark.hidden = false; requestAnimationFrame(() => mark.classList.add('on')); }
 
+  // 7 · the ledger: one box per entry; tick(id) / untick(id); at most seven shown, the ticked ones first
+  const boxes = new Map();
+  const state = new Set();
+  function renderLedger() {
+    if (!ledger) return;
+    const entries = ledger.entries.filter((e) => boxes.has(e.id) || state.has(e.id) || e.act === undefined);
+    const visible = ledger.entries.filter((e) => state.has(e.id)).slice(-7);
+    ledgerEl.innerHTML = '';
+    visible.forEach((e) => { const li = el('li', 'done ' + (e.kind || ''), `<span class="box">✓</span><span class="kind">${e.kind || ''}</span><span class="text"></span>`); li.querySelector('.text').textContent = e.text; ledgerEl.appendChild(li); requestAnimationFrame(() => li.classList.add('on')); });
+    ledgerEl.hidden = visible.length === 0;
+  }
+  function tick(id) { if (!ledger || state.has(id)) return; state.add(id); renderLedger(); }
+  function untickAfter(keep) { state.clear(); keep.forEach((id) => state.add(id)); renderLedger(); }
+  ledgerEl.hidden = true;
+  ticked.forEach((id) => state.add(id)); renderLedger();
+
   let timeline = null;
   function mountBar({ duration, marks, seek, step }) { timeline = mountTimeline(bar, { duration, marks, seek, step }); return timeline; }
 
@@ -66,5 +88,5 @@ export function mountStage(root, { act = 'act', name = '', seasons = null, seaso
   // the responsive rule: landscape puts the stream right, portrait below — the CSS does it; the scene may ask which
   const layout = () => (root.clientWidth / root.clientHeight < 1 ? 'portrait' : 'landscape');
 
-  return { frame, scene, stream, hold, hud, push, showHold, hideHold, revealMark, setSeason, mountBar, tick: (u) => timeline && timeline.tick(u), onKeyframes, layout, clearStream: () => { stream.innerHTML = ''; } };
+  return { frame, scene, stream, hold, hud, ledger: ledgerEl, push, showHold, hideHold, revealMark, setSeason, mountBar, tick: (u) => timeline && timeline.tick(u), achieve: tick, resetLedger: untickAfter, onKeyframes, layout, clearStream: () => { stream.innerHTML = ''; } };
 }
