@@ -1,0 +1,15 @@
+{
+  "act": "I",
+  "title": "the seed",
+  "rule": "every line a datum. A milerock is the season deliverable — the rock in the river the current flows around; it is spoken when the thread appears.",
+  "milerocks": [
+    {
+      "id": "encode-multiversx-2023",
+      "date": "2023-10-31",
+      "precision": "month",
+      "line": "4th place — AI bounty track, Encode × MultiversX Hackathon. The first milerock.",
+      "source": "locki/docs/locki3d/encode-multiversx-2023.md — Locki3D, the foundational project; team jnxmas · Calin · Satish",
+      "consent": "the realm's own record"
+    }
+  ]
+}
