@@ -2,10 +2,53 @@
   "name": "the ledger",
   "rule": "what remains — Muninn's element on the stage. One list for every act; an act's beat carries achieve:<id> and the box ticks. Derived from the timeline, never from storage: scrub back and it unticks. At most seven visible. Every entry a sentence a human can check; the numbers stay in Muninn's KPIs, off the page.",
   "entries": [
-    { "id": "minted",   "act": "I",  "kind": "minted",   "text": "we minted a tesseract → Yawp!", "when": "2023-10-23", "source": "public/assets/tesseract.mint.json" },
-    { "id": "milerock", "act": "I",  "kind": "milerock", "text": "4th place — AI bounty track, Encode × MultiversX. The first milerock.", "when": "2023-10", "source": "locki/docs/locki3d/encode-multiversx-2023.md" },
-    { "id": "modular",  "act": "II", "kind": "learned",  "text": "we learned the hard way: modularity — better separation of concerns (not Next.js); serverless is awesome → microservices, but OSS", "when": "Season 0–1", "source": "the operator, forge #4 c7755" },
-    { "id": "learnings","act": "II", "kind": "needed",   "text": "the chat requires learnings first", "when": "Season 0", "source": "the operator, forge #4 c7755" },
-    { "id": "divided",  "act": "II", "kind": "held",     "text": "one became two — Líf and Lífþrasir hold the tree from beneath", "when": "Act II", "source": "Vafþrúðnismál 45" }
+    {
+      "id": "minted",
+      "act": "I",
+      "kind": "minted",
+      "text": "we minted a tesseract → Yawp!",
+      "when": "2023-10-23",
+      "source": "public/assets/tesseract.mint.json"
+    },
+    {
+      "id": "milerock",
+      "act": "I",
+      "kind": "milerock",
+      "text": "4th place — AI bounty track, Encode × MultiversX. The first milerock.",
+      "when": "2023-10",
+      "source": "locki/docs/locki3d/encode-multiversx-2023.md"
+    },
+    {
+      "id": "cohort",
+      "act": "I",
+      "kind": "milerock",
+      "text": "3rd place — the Itheum builder cohort. Season 1's milerock.",
+      "when": "2024-06",
+      "source": "the operator, forge #5 (2026-08-30) — approximate; docs.locki.io Season 1"
+    },
+    {
+      "id": "modular",
+      "act": "II",
+      "kind": "learned",
+      "text": "we learned the hard way: modularity — better separation of concerns (not Next.js); serverless is awesome → microservices, but OSS",
+      "when": "Season 0–1",
+      "source": "the operator, forge #4 c7755"
+    },
+    {
+      "id": "learnings",
+      "act": "II",
+      "kind": "needed",
+      "text": "the chat requires learnings first",
+      "when": "Season 0",
+      "source": "the operator, forge #4 c7755"
+    },
+    {
+      "id": "divided",
+      "act": "II",
+      "kind": "held",
+      "text": "one became two — Líf and Lífþrasir hold the tree from beneath",
+      "when": "Act II",
+      "source": "Vafþrúðnismál 45"
+    }
   ]
 }

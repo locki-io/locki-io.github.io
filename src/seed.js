@@ -37,7 +37,10 @@ async function start() {
   // the act's own story: milerocks — spoken when the thread appears, marked on the season
   let story = null;
   try { const r = await fetch('/story/seed.json'); if (r.ok) story = await r.json(); } catch (e) {}
-  const milerocks = (story && story.milerocks) || [];
+  // Act I speaks only the milerocks inside its season; later ones stay data for a later act (the ledger keeps them)
+  const allMilerocks = (story && story.milerocks) || [];
+  let milerocks = allMilerocks;
+  if (pulse) milerocks = allMilerocks.filter((m) => Date.parse(m.date) <= Date.parse(pulse.season.to));
   let cameraPath = null;
   try { const r = await fetch('/camera/seed.json'); if (r.ok) cameraPath = await r.json(); } catch (e) {}
   const seasons = await loadSeasons(), ledger = await loadLedger();
@@ -60,7 +63,7 @@ async function start() {
     stream, director, intro,
     cameraPath: director ? null : cameraPath,
     onKeyframes: stage.onKeyframes,
-    onTime: (u) => stage.tick(u),
+    onTime: (u) => { stage.tick(u); if (pulse) stage.setSeasonAt(new Date(Date.parse(pulse.season.from) + u / api.duration * (Date.parse(pulse.season.to) - Date.parse(pulse.season.from))).toISOString()); },
     onSeek: () => { stage.clearStream(); stage.state('collapsed', false); stage.state('born', false); stage.resetLedger([]); held = false; unhold(); opening(); },
     onBeat: (i, line) => stage.push(line),
     onCollapse: () => { stage.state('collapsed'); stage.achieve('minted'); },

@@ -19,6 +19,13 @@ export async function loadSeasons() {
   try { const r = await fetch('/story/seasons.json'); if (r.ok) return await r.json(); } catch (e) {}
   return null;
 }
+// the season a date falls in: the last season begun (from: <= date); a gap between seasons keeps the previous one (default:)
+export function seasonAt(seasons, iso) {
+  if (!seasons || !iso) return null;
+  const t = Date.parse(iso); let found = null;
+  seasons.seasons.forEach((s) => { if (s.from && Date.parse(s.from) <= t) found = s; });
+  return found;
+}
 export async function loadLedger() {
   try { const r = await fetch('/story/ledger.json'); if (r.ok) return await r.json(); } catch (e) {}
   return null;
@@ -53,6 +60,7 @@ export function mountStage(root, { act = 'act', name = '', seasons = null, seaso
     root.dataset.season = id;
   }
   setSeason(seasonId || (seasons && seasons.current));
+  function setSeasonAt(iso) { const s = seasonAt(seasons, iso); if (s) setSeason(s.id); }
 
   function push(text, cls) {
     const li = el('li', cls || '', null); li.textContent = text; stream.appendChild(li);
@@ -93,5 +101,5 @@ export function mountStage(root, { act = 'act', name = '', seasons = null, seaso
   // the responsive rule: landscape puts the stream right, portrait below — the CSS does it; the scene may ask which
   const layout = () => (root.clientWidth / root.clientHeight < 1 ? 'portrait' : 'landscape');
 
-  return { frame, scene, stream, hold, hud, ledger: ledgerEl, knobs, showKnobs, state, push, showHold, hideHold, revealMark, setSeason, mountBar, tick: (u) => timeline && timeline.tick(u), achieve: tick, resetLedger: untickAfter, onKeyframes, layout, clearStream: () => { stream.innerHTML = ''; } };
+  return { frame, scene, stream, hold, hud, ledger: ledgerEl, knobs, showKnobs, state, push, setSeasonAt, showHold, hideHold, revealMark, setSeason, mountBar, tick: (u) => timeline && timeline.tick(u), achieve: tick, resetLedger: untickAfter, onKeyframes, layout, clearStream: () => { stream.innerHTML = ''; } };
 }

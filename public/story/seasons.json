@@ -1,6 +1,6 @@
 {
   "source": "docs.locki.io — src/pages/index.js SEASONS[] (the airlock, read 2026-08-29); accents are the docs' own; Season 0 date corrected to October 2023 (operator, 2026-08-29)",
-  "rule": "the tori wear the current season's accent; the cube keeps the tesseract's blue in every season — the seed is the invariant, the surface is the weather; the 'void' entry is the stage's own (forge #5) — before Season 0, the dew colour",
+  "rule": "the tori wear the current season's accent; the cube keeps the tesseract's blue in every season — the seed is the invariant, the surface is the weather; the 'void' entry is the stage's own (forge #5) — before Season 0, the dew colour; from:/to: let the season line change while scrubbing (stage seasonAt); a date between seasons keeps the last season begun (default:)",
   "current": "ragnarok",
   "seed": "#1b2bff",
   "seasons": [
@@ -22,7 +22,11 @@
       "accent": "#6c5ce7",
       "emoji": "🌱",
       "memory": "4th place. The conviction that AI could serve citizens without betraying them. The seed planted.",
-      "note": "the landing page says 2024 — corrected here per the operator and locki3d/encode-multiversx-2023.md; vaettir issue opened 2026-08-29"
+      "note": "the landing page says 2024 — corrected here per the operator and locki3d/encode-multiversx-2023.md; vaettir issue opened 2026-08-29",
+      "from": "2023-09-01",
+      "to": "2023-10-15",
+      "milerock": "4th place — AI bounty track",
+      "dates_source": "operator, forge #5 (2026-08-30)"
     },
     {
       "id": "itheum",
@@ -31,7 +35,12 @@
       "date": "2024",
       "accent": "#a855f7",
       "emoji": "🔗",
-      "memory": "Accepted into the Itheum builder cohort — the first structured experiment in data sovereignty."
+      "memory": "Accepted into the Itheum builder cohort — the first structured experiment in data sovereignty.",
+      "from": "2024-02-01",
+      "to": "2024-06-30",
+      "precision": "month",
+      "milerock": "3rd place in the cohort",
+      "dates_source": "operator, forge #5 (2026-08-30) — approximate"
     },
     {
       "id": "screener",
