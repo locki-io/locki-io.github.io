@@ -35,6 +35,10 @@ async function start() {
   let pulse = null;
   try { const r = await fetch('/pulse/seed.json'); if (r.ok) pulse = await r.json(); } catch (e) {}
   if (!pulse || !pulse.season) pulse = null;
+  // the act's own story: milerocks — spoken when the thread appears, marked on the season
+  let story = null;
+  try { const r = await fetch('/story/seed.json'); if (r.ok) story = await r.json(); } catch (e) {}
+  const milerocks = (story && story.milerocks) || [];
   let cameraPath = null;
   try { const r = await fetch('/camera/seed.json'); if (r.ok) cameraPath = await r.json(); } catch (e) {}
   const hud = document.getElementById('director');
@@ -44,7 +48,7 @@ async function start() {
     director,
     intro,
     onTime: (u) => bar && bar.tick(u),
-    onSeek: () => { list.innerHTML = ''; },
+    onSeek: () => { list.innerHTML = ''; document.body.classList.remove('collapsed', 'born'); },
     cameraPath: director ? null : cameraPath,
     onKeyframes: (keys, what) => {
       document.getElementById('keycount').textContent = `${keys.length} keyframe${keys.length === 1 ? '' : 's'} · ${what}`;
@@ -57,7 +61,7 @@ async function start() {
       requestAnimationFrame(() => li.classList.add('on'));
     },
     onCollapse: () => document.body.classList.add('collapsed'),
-    onBirth: () => document.body.classList.add('born'),
+    onBirth: () => { document.body.classList.add('born'); milerocks.forEach((m) => { const li = document.createElement('li'); li.textContent = m.line; li.className = 'milerock'; list.appendChild(li); requestAnimationFrame(() => li.classList.add('on')); }); },
   });
 
   // --- the timeline bar: the seed season, marked by repositories --------------------
@@ -75,11 +79,15 @@ async function start() {
       });
       if (pulse.private && pulse.private.repos) marks.push({ u: 0, label: `${pulse.private.repos} private`, cls: 'private', title: `${pulse.private.commits} commits, names folded` });
       if (mintDate) marks.push({ u: at(mintDate), label: 'mint', cls: 'yawp', title: `the seed is minted · ${mintDate}` });
+      milerocks.forEach((m) => marks.push({ u: at(m.date), label: 'milerock', cls: 'milerock', title: `${m.line} · ${m.date}${m.precision === 'month' ? ' (month)' : ''}` }));
       marks.sort((a, b) => a.u - b.u);
     } else {
       marks.push({ u: 0, label: 'breathe' }, { u: api.duration * 0.55, label: 'collapse' }, { u: api.duration * 0.62, label: 'birth', cls: 'yawp' });
     }
     bar = mountTimeline(document.getElementById('timeline'), { duration: api.duration, marks, seek: api.seek, step: 3 });
+    // testing: ?t=<seconds> jumps the act once the seed is loaded
+    const want = parseFloat(params.get('t'));
+    if (Number.isFinite(want)) { const tryIt = () => (api.ready() ? api.seek(want) : setTimeout(tryIt, 100)); tryIt(); }
   }
 }
 document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', start) : start();

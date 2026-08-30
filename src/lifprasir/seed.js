@@ -26,6 +26,7 @@ const FLOOR_Y = 0.9;            // the ground: just above the radiating orb
 const GRASS_START = 22.5;       // when the camera has risen above — the grass comes out of the floor
 const GRASS_SECONDS = 3.5;
 const GRASS_COUNT = 700;
+const HOME_SCALE = 0.5;         // the seed at rest — half the minted size, the operator's eye
 const INTRO_SECONDS = 2.6;      // when the act follows the void: the seed is born where the cube stood, and grows down to its place
 
 // Deterministic, like the tree: the same field of grass every time. No Math.random.
@@ -269,7 +270,7 @@ export function initSeed(container, {
     if (!introFrom) return;
     const e = k * k * (3 - 2 * k);
     root.position.lerpVectors(introFrom.position, new THREE.Vector3(0, 0, 0), e);
-    root.scale.setScalar(introFrom.scale + (1 - introFrom.scale) * e);
+    root.scale.setScalar(introFrom.scale + (HOME_SCALE - introFrom.scale) * e);
     root.visible = true;
     if (k >= 1 && mixer) mixer.timeScale = 1;
   }
@@ -281,9 +282,9 @@ export function initSeed(container, {
     t0 = clock.elapsedTime - u - INTRO;
     if (introFrom) { setIntro(1); }
     beatsShown = 0; onSeek && onSeek(u);                       // the stream is replayed up to u by setState's catch-up
-    collapsed = u >= BREATH_END; born = u >= BIRTH_START;
+    collapsed = false; born = false;                             // setState re-fires onCollapse / onBirth as it catches up
     if (mixer) mixer.timeScale = u < BREATH_END ? 1 : 0;
-    root.visible = u < BIRTH_START; root.scale.setScalar(1); root.position.set(0, 0, 0);
+    root.visible = u < BIRTH_START; root.scale.setScalar(HOME_SCALE); root.position.set(0, 0, 0);
     thread.scale.y = 0.0001; coreMat.opacity = 0; haloMat.opacity = 0; spark.visible = false;
     floor.visible = pin.visible = grass.visible = false; glow.scale.setScalar(1.4);
   }
@@ -297,13 +298,13 @@ export function initSeed(container, {
       // Movement 1 — breathe. One line of the stream per breath.
       root.rotation.y = Math.sin(u * 0.25) * 0.35;
       root.rotation.x = Math.sin(u * 0.18) * 0.18;
-      root.scale.setScalar(1);
+      root.scale.setScalar(HOME_SCALE);
       root.visible = true;
     } else if (u < BIRTH_START) {
       // Movement 2 — collapse into the point of power.
       if (!collapsed) { collapsed = true; if (mixer) mixer.timeScale = 0; onCollapse && onCollapse(); }
       const k = easeIn((u - BREATH_END) / COLLAPSE_SECONDS);
-      root.scale.setScalar(Math.max(0.0001, 1 - k));
+      root.scale.setScalar(Math.max(0.0001, HOME_SCALE * (1 - k)));
       root.rotation.y *= (1 - k * 0.1);
       glow.scale.setScalar(1.4 + 2.4 * k); // the point flares as the seed folds into it
     } else {
@@ -360,7 +361,7 @@ export function initSeed(container, {
   }
 
   return {
-    seek, duration: DURATION,
+    seek, duration: DURATION, ready: () => t0 !== null,
     dispose() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
