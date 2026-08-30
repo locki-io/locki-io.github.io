@@ -303,7 +303,7 @@ export function initVoid(container, {
   }
   function onGesture(e) {
     if (e.type === 'keydown' && (e.key.startsWith('Arrow') || (dir.active && /^[keKE]$/.test(e.key)))) return; // arrows scrub; the director's keys stay the director's
-    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.timeline')) return;      // the timeline bar is not a yawp
+    if (e.type === 'pointerdown' && e.target && e.target.closest && e.target.closest('.bar')) return;      // the timeline bar is not a yawp
     yawp();
   }
 

@@ -5,11 +5,21 @@
   "milerocks": [
     {
       "id": "encode-multiversx-2023",
-      "date": "2023-10-31",
+      "date": "2023-10-15",
       "precision": "month",
       "line": "4th place — AI bounty track, Encode × MultiversX Hackathon. The first milerock.",
       "source": "locki/docs/locki3d/encode-multiversx-2023.md — Locki3D, the foundational project; team jnxmas · Calin · Satish",
-      "consent": "the realm's own record"
+      "consent": "the realm's own record",
+      "note": "operator, forge #5 (2026-08-30): the hackathon season closed 2023-10-15"
+    },
+    {
+      "id": "itheum-cohort-2024",
+      "date": "2024-06-30",
+      "precision": "month",
+      "line": "3rd place — the Itheum builder cohort. Season 1's milerock.",
+      "source": "the operator, forge #5 (2026-08-30) — approximate date",
+      "consent": "the realm's own record",
+      "note": "beyond Act I's bar (ends 2024-04-30): kept as data, not marked on the seed's season"
     }
   ]
 }

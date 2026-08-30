@@ -1,7 +1,8 @@
-// void.js — entry for void.html, the Act 0 stage (void → 0).
-// The stream on the right is DATA: the four books' own words, with source and consent.
+// void.js — entry for void.html: Act 0 on the stage (forge #4, #5).
+// The stage mounts the common elements; the act supplies its scene and its data —
+// the five books' own words, with source: and consent:.
 import { initVoid } from './lifprasir/void.js';
-import { mountTimeline } from './lifprasir/timeline.js';
+import { mountStage, loadSeasons, loadLedger } from './lifprasir/stage.js';
 
 async function start() {
   const params = new URLSearchParams(location.search);
@@ -11,47 +12,34 @@ async function start() {
   let cameraPath = null;
   try { const r = await fetch('/camera/void.json'); if (r.ok) cameraPath = await r.json(); } catch (e) {}
   if (!Array.isArray(cameraPath)) cameraPath = null;
+  const seasons = await loadSeasons(), ledger = await loadLedger();
 
-  const list = document.getElementById('stream');
+  // the season line: before any season has a colour — the stage's own 'void' entry (dew)
+  const stage = mountStage(document.getElementById('stage'), { act: 'void', name: 'Act 0 · void → 0', seasons, seasonId: 'void', director, ledger, ticked: [] });
   const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-  const h1 = document.querySelector('.title h1');
-  if (h1 && books.length) h1.textContent = `On the shoulders of giants — ${words[books.length] || books.length} books.`;
-  const hud = document.getElementById('director');
-  const hold = document.getElementById('hold');
-  if (director) hud.hidden = false;
+  const opening = () => stage.push(`On the shoulders of giants — ${words[books.length] || books.length} books.`, 'head');
+  opening();
 
-  const push = (text, cls) => {
-    const li = document.createElement('li'); li.textContent = text; if (cls) li.className = cls;
-    list.appendChild(li); requestAnimationFrame(() => li.classList.add('on'));
-    while (list.children.length > 14) list.removeChild(list.firstChild); // the stream scrolls; nothing is lost — it is in the JSON
-  };
-
-  const api = initVoid(document.getElementById('void'), {
+  const api = initVoid(stage.scene, {
     books, director, cameraPath: director ? null : cameraPath,
     autoYawp: params.has('autoyawp'),
     speed: Math.max(0.1, parseFloat(params.get('speed') || '1')) || 1,
     startAt: params.get('t') === 'hold' ? 'hold' : parseFloat(params.get('t') || '0') || 0,
     yawpSkip: parseFloat(params.get('ty') || '0') || 0,
-    onKeyframes: (keys, what) => {
-      document.getElementById('keycount').textContent = `${keys.length} keyframe${keys.length === 1 ? '' : 's'} · ${what}`;
-      document.getElementById('keys').textContent = JSON.stringify(keys);
-    },
-    onLayout: (mode) => { document.body.dataset.layout = mode; },
-    onTime: (u) => tick(u),
-    onSeek: (u) => { list.innerHTML = ''; tick(u); },
-    onBookOpen: (b) => push(`— ${b.author}, ${b.title}${b.edition ? ' · ' + b.edition : ''}`, 'book'),
-    onLine: (b, i, line) => push(line),
-    onHold: () => { if (door) { push(door.line, 'door'); const el = hold.querySelector('.door'); if (el) el.textContent = door.line; } hold.hidden = false; document.body.classList.add('holding'); },
-    onYawp: () => { hold.hidden = true; document.body.classList.remove('holding'); document.body.classList.add('yawped'); push('YAAAAWP', 'yawp'); },
-    onFold: () => { push('— and the light folds into a cube: 0', 'book'); document.body.classList.add('folded'); },
-    onDone: () => { if (!params.has('stay')) { const f = api.handoff(); document.body.classList.add('leaving'); setTimeout(() => { location.href = `/seed.html?from=${f.x.toFixed(3)},${f.y.toFixed(3)},${f.h.toFixed(3)}`; }, 900); } },
+    onKeyframes: stage.onKeyframes,
+    onLayout: (mode) => { stage.frame.dataset.layout = mode; },
+    onTime: (u) => stage.tick(u),
+    onSeek: () => { stage.clearStream(); stage.hideHold(); stage.state('yawped', false); stage.state('folded', false); opening(); },
+    onBookOpen: (b) => stage.push(`— ${b.author}, ${b.title}${b.edition ? ' · ' + b.edition : ''}`, 'book'),
+    onLine: (b, i, line) => stage.push(line),
+    onHold: () => { if (door) stage.push(door.line, 'door'); stage.showHold({ door: door ? door.line : '', verb: 'YAWP', hint: 'the books have spoken — sound yours · any key, or touch' }); },
+    onYawp: () => { stage.hideHold(); stage.state('yawped'); stage.push('YAAAAWP', 'yawp'); },
+    onFold: () => { stage.push('— and the light folds into a cube: 0', 'book'); stage.state('folded'); },
+    // the handoff: where the cube stands on the screen, and how tall — the seed is born there
+    onDone: () => { if (!params.has('stay')) { const f = api.handoff(); stage.frame.classList.add('leaving'); setTimeout(() => { location.href = `/seed.html?from=${f.x.toFixed(3)},${f.y.toFixed(3)},${f.h.toFixed(3)}`; }, 900); } },
   });
 
-  // --- the timeline bar: one module for every act ---------------------------------
-  const bar = mountTimeline(document.getElementById('timeline'), {
-    duration: api.duration, seek: api.seek,
-    marks: api.marks.map((m) => ({ u: m.u, label: (m.year ? m.year + ' ' : '') + m.label.split(' ').pop(), cls: m.id === 'yawp' ? 'yawp' : '' })),
-  });
-  function tick(u) { bar.tick(u); }
+  stage.mountBar({ duration: api.duration, seek: api.seek,
+    marks: api.marks.map((m) => ({ u: m.u, label: (m.year ? m.year + ' ' : '') + m.label.split(' ').pop(), cls: m.id === 'yawp' ? 'yawp' : '' })) });
 }
 document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', start) : start();

@@ -27,9 +27,9 @@ The Vaettir realm's **public homepage** — [www.locki.io](https://www.locki.io)
 
 Owns **`.env.config` only** (CONFIG class — never rotates). Template: `env-templates/env.config.example`. **No secrets belong in this repo** — it is public.
 
-## Priority (operator, 2026-08-29)
+## Priority (operator, 2026-08-30)
 
-Forge #1 *The Living Tree* — **Part A first:** the tree renders from real data. Today's hero tree is the aesthetic scaffold; the data pipeline is the next `dummit/` thread. See Arc42 §4.
+Forge #2 *the story* — **act by act**, one `dummit/actN-*` thread and one forge issue per act, every act on the stage (#4/#5). The real-data tree (#1, superseded) is **Acts III–IV**: the trunk from blog frontmatter, the branches from the agents' commits. See Arc42 §4.
 
 ## Do not
 
