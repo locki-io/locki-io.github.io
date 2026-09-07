@@ -22,12 +22,15 @@ const R = 0.4, r = 0.125;       // the rings — a quarter of the logo's: the ro
 const DEEP = -10;               // where the ring rises from
 const BELOW = FLOOR_Y - 0.9;    // where it stays: under the ground, seen through it
 const DIST = 2 * R;             // the two centres, 2R apart — friction in the middle
+const CUBE = 2 * r * 0.92;      // the subtracted cube: the tube's diameter, almost — the logo's own law, at root scale
+const GAP = (CUBE * 1.25) / R;  // the arc the cube took out of the C (radians)
 
 const ease = (s) => s * s * (3 - 2 * s);
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
 export function initRoots(container, {
+  seedColor = 0x1b2bff,          // the cube keeps the tesseract's blue in every season (seasons.json seed)
   beats = [],                   // [{ u, id, line, cls }] — the act's data: what is said, when
   director = false, cameraPath = null, onKeyframes,
   onBeat, onHold, onGesture, onMark, onTime, onSeek,
@@ -88,10 +91,19 @@ export function initRoots(container, {
 
   // --- the rings: grey-white, dew after the fire ---------------------------------
   const dew = new THREE.MeshStandardMaterial({ color: 0xdedede, emissive: 0x6a6a6a, emissiveIntensity: 0.5, roughness: 0.55, metalness: 0.05 });
-  const ringGeo = new THREE.TorusGeometry(R, r, 28, 120);
-  const one = new THREE.Mesh(ringGeo, dew), two = new THREE.Mesh(ringGeo, dew);
-  one.rotation.x = Math.PI / 2; two.rotation.x = Math.PI / 2;                    // flat: seen from above as rings around the pin
+  const one = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 120), dew);              // whole: the O
+  const two = new THREE.Mesh(new THREE.TorusGeometry(R, r, 28, 140, Math.PI * 2 - GAP), dew);  // the C — a cube was subtracted at its far end
+  one.rotation.x = Math.PI / 2;                                                  // flat: seen from above as rings around the pin
+  two.rotation.set(Math.PI / 2, 0, GAP / 2);                                     // flat, the gap centred on the far side (+x)
   one.visible = two.visible = false; scene.add(one, two);
+  // the cube in the gap: the human in the loop, holding the C open under the ground
+  const cubeGroup = new THREE.Group(); cubeGroup.visible = false; scene.add(cubeGroup);
+  [1, 0.62, 0.3].forEach((k) => {
+    const faces = new THREE.MeshBasicMaterial({ color: seedColor, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide });
+    const edges = new THREE.LineBasicMaterial({ color: new THREE.Color(seedColor).lerp(new THREE.Color(0xffffff), 0.35), transparent: true, opacity: 0.95 });
+    cubeGroup.add(new THREE.Mesh(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k), faces));
+    cubeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k)), edges));
+  });
 
   // --- the hold ----------------------------------------------------------------------
   let holding = false, held = false, fired = {}, t0 = null, holdStart = null, holdAccum = 0, marked = false;
@@ -134,12 +146,12 @@ export function initRoots(container, {
     const y = DEEP + (BELOW - DEEP) * rise;
     // …and divides: one becomes two, 2R apart
     const div = ease(clamp01((u - RISE_END) / (DIVIDE_END - RISE_END)));
-    one.visible = two.visible = u >= RISE_START;
+    one.visible = two.visible = cubeGroup.visible = u >= RISE_START;
     one.position.set(-DIST / 2 * div, y, 0); two.position.set(DIST / 2 * div, y, 0);
     // a breath of the membrane: the rings swell as they part, then settle
     const swell = 1 + Math.sin(Math.PI * div) * 0.12;
-    one.scale.setScalar(swell); two.scale.setScalar(swell);
-    one.rotation.z = div * 0.0; two.rotation.z = 0;
+    one.scale.setScalar(swell); two.scale.setScalar(swell); cubeGroup.scale.setScalar(swell);
+    cubeGroup.position.set(DIST / 2 * div + R * swell, y, 0);                    // the gap's centre, wherever the C stands
     under.intensity = 30 * rise;
 
     if (u >= MARK_AT && !marked) { marked = true; onMark && onMark(); }

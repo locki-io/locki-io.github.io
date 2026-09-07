@@ -20,6 +20,7 @@ async function start() {
 
   const beats = (story && story.beats) || [];
   const api = initRoots(stage.scene, {
+    seedColor: seasons && seasons.seed ? parseInt(String(seasons.seed).replace('#', ''), 16) : undefined,
     beats, director, cameraPath: director ? null : cameraPath, onKeyframes: stage.onKeyframes,
     startAt: parseFloat(params.get('t') || '0') || 0,
     onBeat: (b) => { if (b.line) stage.push(b.line, b.cls || ''); if (b.season) stage.setSeason(b.season); [].concat(b.achieve || []).forEach((id) => stage.achieve(id)); },
