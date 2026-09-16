@@ -70,7 +70,10 @@ button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
 .world{position:absolute;inset:8% 6%;border-radius:50%;background:url("/assets/vaettir/world.jpg") center/cover no-repeat;z-index:1;
   box-shadow:0 0 0 2px rgba(217,164,65,.35),0 0 80px 10px rgba(106,63,163,.45),inset 0 0 120px rgba(0,0,0,.55)}
 .world::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 42%,transparent 38%,rgba(18,15,43,.55) 78%)}
-.caption{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:min(54%,400px);color:var(--bone);text-shadow:0 2px 14px rgba(0,0,0,.95);font-size:clamp(13px,1.7vw,19px);line-height:1.35;z-index:3}
+/* the tree in the middle — Yggdrasil's embryo, green, the nineteen its protectors */
+.tree{position:absolute;inset:8% 6%;border-radius:50%;overflow:hidden;z-index:2;pointer-events:none}
+.tree canvas{display:block;width:100%!important;height:100%!important}
+.caption{position:absolute;left:50%;top:74%;transform:translate(-50%,-50%);text-align:center;width:min(54%,400px);color:var(--bone);text-shadow:0 2px 14px rgba(0,0,0,.95);font-size:clamp(13px,1.7vw,19px);line-height:1.35;z-index:3}
 .caption h2{font-family:var(--display);font-size:clamp(15px,2.4vw,26px);letter-spacing:.1em;margin:4px 0 6px;color:var(--mead);text-wrap:balance}
 .caption p{margin:0}
 .caption p em{color:var(--rune);font-style:normal}

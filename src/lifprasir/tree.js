@@ -39,7 +39,21 @@ function hash(n) {
   return s - Math.floor(s); // 0..1
 }
 
-export function initLifprasirTree(container) {
+// The tree's colours are a palette, not a law: RED is the thread carried upward
+// (the hero's canon); GREEN is the living tree the feast gathers around — the
+// nineteen seated as its protectors (forge #8). Same rule, same shape, one dye.
+export const PALETTE_RED = {
+  ambient: 0x331018, key: 0xff5a4a, rim: 0x3036c5,
+  wood: 0x6e0d1c, emissive: 0x7a0f1f, leaf: 0xffae6a,
+  glow: ['rgba(255,230,190,1)', 'rgba(255,150,90,0.7)', 'rgba(255,90,60,0)'],
+};
+export const PALETTE_GREEN = {
+  ambient: 0x0f2a18, key: 0x8cffb0, rim: 0x3036c5,
+  wood: 0x1f5a2e, emissive: 0x2d8a4a, leaf: 0xb8ffc8,
+  glow: ['rgba(235,255,240,1)', 'rgba(140,255,176,0.7)', 'rgba(60,200,120,0)'],
+};
+
+export function initLifprasirTree(container, { palette = PALETTE_RED, cameraY = 7.5, cameraZ = 17, lookY = 7 } = {}) {
   if (!container) return () => {};
 
   const reduceMotion =
@@ -55,8 +69,8 @@ export function initLifprasirTree(container) {
     0.1,
     1000
   );
-  camera.position.set(0, 7.5, 17);
-  camera.lookAt(0, 7, 0);
+  camera.position.set(0, cameraY, cameraZ);
+  camera.lookAt(0, lookY, 0);
 
   const renderer = new THREE.WebGLRenderer({
     alpha: true, // let the dark hero photo show through behind the tree
@@ -67,11 +81,11 @@ export function initLifprasirTree(container) {
   container.appendChild(renderer.domElement);
 
   // --- Light: a warm root-glow + cool rim ------------------------------------
-  scene.add(new THREE.AmbientLight(0x331018, 0.9));
-  const key = new THREE.PointLight(0xff5a4a, 70, 80);
+  scene.add(new THREE.AmbientLight(palette.ambient, 0.9));
+  const key = new THREE.PointLight(palette.key, 70, 80);
   key.position.set(6, 12, 10);
   scene.add(key);
-  const rim = new THREE.PointLight(0x3036c5, 40, 80); // Locki blue
+  const rim = new THREE.PointLight(palette.rim, 40, 80); // Locki blue
   rim.position.set(-10, 4, -6);
   scene.add(rim);
 
@@ -82,8 +96,8 @@ export function initLifprasirTree(container) {
 
   // Wood material — crimson at the root, the red thread carried upward.
   const branchMaterial = new THREE.MeshStandardMaterial({
-    color: 0x6e0d1c,
-    emissive: 0x7a0f1f,
+    color: palette.wood,
+    emissive: palette.emissive,
     emissiveIntensity: 0.35,
     roughness: 0.55,
     metalness: 0.15,
@@ -166,7 +180,7 @@ export function initLifprasirTree(container) {
     new THREE.Float32BufferAttribute(leafPositions, 3)
   );
   const leafMaterial = new THREE.PointsMaterial({
-    color: 0xffae6a,
+    color: palette.leaf,
     size: 0.42,
     map: makeGlowSprite(),
     transparent: true,
@@ -192,9 +206,9 @@ export function initLifprasirTree(container) {
       size / 2,
       size / 2
     );
-    g.addColorStop(0, 'rgba(255,230,190,1)');
-    g.addColorStop(0.35, 'rgba(255,150,90,0.7)');
-    g.addColorStop(1, 'rgba(255,90,60,0)');
+    g.addColorStop(0, palette.glow[0]);
+    g.addColorStop(0.35, palette.glow[1]);
+    g.addColorStop(1, palette.glow[2]);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, size, size);
     const tex = new THREE.CanvasTexture(c);
