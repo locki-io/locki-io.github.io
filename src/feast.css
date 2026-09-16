@@ -10,7 +10,11 @@
 }
 html{color-scheme:dark}
 [hidden]{display:none!important}
-body{margin:0;background:var(--night);color:var(--bone);font-family:var(--body);font-size:18px;line-height:1.5;overflow-x:hidden}
+body{margin:0;background:var(--night);position:relative;color:var(--bone);font-family:var(--body);font-size:18px;line-height:1.5;overflow-x:hidden}
+
+/* --- Ragnarök: the whole background burns (src/fire.js — a fullscreen fbm shader) ---- */
+.ragnarok{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.site-top,main.hall,footer.locki-footer{position:relative;z-index:1}
 
 /* --- the chrome: logo top, sidebar left, footer below ---------------------------- */
 .site-top{display:flex;align-items:center;gap:14px;padding:14px 18px 0}
@@ -20,7 +24,7 @@ body{margin:0;background:var(--night);color:var(--bone);font-family:var(--body);
 .burger:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:218px;padding:76px 18px 24px;box-sizing:border-box;z-index:30;
-  background:linear-gradient(180deg,rgba(28,22,64,.55),rgba(18,15,43,.9));border-right:1px solid rgba(217,164,65,.18)}
+  background:linear-gradient(180deg,rgba(28,22,64,.72),rgba(18,15,43,.94));backdrop-filter:blur(6px);border-right:1px solid rgba(217,164,65,.18)}
 .side-eyebrow{font-family:var(--display);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--rune);margin:18px 0 6px;opacity:.8}
 .side-link{display:block;font-family:var(--display);font-size:13px;letter-spacing:.08em;color:var(--bone);text-decoration:none;padding:7px 10px;border-radius:8px;margin:2px 0}
 .side-link small{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone-dim);margin-left:.4em}
@@ -35,7 +39,7 @@ main.hall{max-width:1180px;margin:0 auto;padding:0 18px 24px;padding-left:calc(2
 @media (min-width:1650px){main.hall{padding-left:18px}}
 
 footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
-  padding:18px;margin-left:218px;border-top:1px solid rgba(217,164,65,.22);color:var(--bone-dim)}
+  padding:18px;margin-left:218px;border-top:1px solid rgba(217,164,65,.22);color:var(--bone-dim);background:rgba(18,15,43,.55)}
 .copyright-text{margin:0;font-size:14px}
 .external-links{color:var(--bone-dim);display:inline-flex}
 .external-links svg{fill:currentColor;height:1.1em}
@@ -52,17 +56,17 @@ footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:1
 
 /* --- the head of the hall --------------------------------------------------------- */
 .hall-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin:10px 0 0}
-h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4.2vw,46px);letter-spacing:.06em;margin:0;color:var(--mead);text-wrap:balance}
+h1{text-shadow:0 2px 18px rgba(0,0,0,.85);font-family:var(--display);font-weight:700;font-size:clamp(28px,4.2vw,46px);letter-spacing:.06em;margin:0;color:var(--mead);text-wrap:balance}
 h1 .build{font-weight:500;font-size:.45em;letter-spacing:.18em;color:var(--bone-dim);text-transform:uppercase}
 .eyebrow{font-family:var(--display);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--season);margin:0 0 4px}
-.motto{margin:4px 0 0;font-style:italic;font-size:19px;color:var(--bone)}
+.motto{margin:4px 0 0;font-style:italic;font-size:19px;color:var(--bone);text-shadow:0 1px 10px rgba(0,0,0,.9)}
+.eyebrow{text-shadow:0 1px 10px rgba(0,0,0,.9)}
 button.skal{font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--night);background:var(--mead);border:0;border-radius:999px;padding:10px 22px;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 6px 24px rgba(217,164,65,.25)}
 button.skal:hover{background:#e8b657}
 button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
 
 /* --- the table-world, the season burning outside the circle ----------------------- */
 .table{position:relative;width:100%;aspect-ratio:1.15/1;max-width:100%;margin:10px auto 0;border-radius:50%;overflow:visible}
-.fire{position:absolute;inset:-6% -4%;width:108%;height:112%;pointer-events:none;z-index:0}
 .world{position:absolute;inset:8% 6%;border-radius:50%;background:url("/assets/vaettir/world.jpg") center/cover no-repeat;z-index:1;
   box-shadow:0 0 0 2px rgba(217,164,65,.35),0 0 80px 10px rgba(106,63,163,.45),inset 0 0 120px rgba(0,0,0,.55)}
 .world::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 42%,transparent 38%,rgba(18,15,43,.55) 78%)}

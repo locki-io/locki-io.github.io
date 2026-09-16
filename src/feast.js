@@ -10,6 +10,14 @@
 // seat wears its initial. Drop `<id>.jpg` (360) and `<id>-full.jpg` (720) into
 // public/assets/vaettir/ and the faces appear — the code asks for them already.
 
+import { initFire } from "./fire.js";
+
+// Ragnarök — the whole hall burns; the season's accent from seasons.json, the eyebrow already says it
+fetch("/story/seasons.json").then((r) => (r.ok ? r.json() : null)).catch(() => null).then((seasons) => {
+  const cur = seasons && seasons.seasons.find((x) => x.id === seasons.current);
+  initFire(document.getElementById("ragnarok"), { season: (cur && cur.accent) || "#c1121f" });
+});
+
 const seats = [
   // [id, brand, kind, trait]
   ["brathi", "Braþi", "the skald · cadence", "holds the bragarfull — <em>the right rhythm, the right form, the right witnesses</em>; the meter broken only on purpose"],
@@ -130,61 +138,3 @@ function skal() {
 }
 document.getElementById("skal").addEventListener("click", skal);
 setTimeout(skal, 700);
-
-// --- Ragnarök: the season burns outside the circle ---------------------------------
-// Ember particles born on the rim of the world, rising and dying — the fire tests
-// the house; the table holds. Reduced motion: one still glow, no loop.
-(function fire() {
-  const canvas = document.getElementById("fire");
-  const ctx = canvas.getContext("2d");
-  let W = 0, H = 0, cx = 0, cy = 0, rx = 0, ry = 0;
-  function size() {
-    const r = canvas.getBoundingClientRect();
-    W = canvas.width = Math.floor(r.width * Math.min(devicePixelRatio, 2));
-    H = canvas.height = Math.floor(r.height * Math.min(devicePixelRatio, 2));
-    cx = W / 2; cy = H / 2;
-    rx = W * 0.46; ry = H * 0.45;                    // just outside the world's edge
-  }
-  size(); addEventListener("resize", size);
-  const COLORS = ["#c1121f", "#e05d0e", "#d9a441"];  // the season's accent → ember → mead
-  if (reduce) {                                       // a still ring of heat
-    const g = ctx.createRadialGradient(cx, cy, Math.min(rx, ry) * 0.9, cx, cy, Math.min(rx, ry) * 1.08);
-    g.addColorStop(0, "rgba(193,18,31,0)"); g.addColorStop(0.55, "rgba(224,93,14,.28)"); g.addColorStop(1, "rgba(193,18,31,0)");
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, Math.min(rx, ry) * 1.2, 0, Math.PI * 2); ctx.fill();
-    return;
-  }
-  const P = [];
-  function spawn() {
-    const a = Math.random() * Math.PI * 2;
-    P.push({
-      a, r: 1,
-      x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry,
-      vx: Math.cos(a) * 0.15 + (Math.random() - 0.5) * 0.3,
-      vy: -(0.4 + Math.random() * 0.9),
-      life: 1, decay: 0.008 + Math.random() * 0.014,
-      size: 1.2 + Math.random() * 2.6,
-      c: COLORS[(Math.random() * COLORS.length) | 0],
-    });
-  }
-  let raf = 0, visible = true;
-  document.addEventListener("visibilitychange", () => { visible = !document.hidden; });
-  function frame() {
-    raf = requestAnimationFrame(frame);
-    if (!visible) return;
-    ctx.clearRect(0, 0, W, H);
-    for (let i = 0; i < 4; i++) spawn();
-    ctx.globalCompositeOperation = "lighter";
-    for (let i = P.length - 1; i >= 0; i--) {
-      const p = P[i];
-      p.x += p.vx * devicePixelRatio; p.y += p.vy * devicePixelRatio;
-      p.vy -= 0.006; p.vx += (Math.random() - 0.5) * 0.12;      // heat rises, flames waver
-      p.life -= p.decay;
-      if (p.life <= 0) { P.splice(i, 1); continue; }
-      ctx.globalAlpha = Math.max(0, p.life) * 0.55;
-      ctx.fillStyle = p.c;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life * devicePixelRatio, 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
-  }
-  raf = requestAnimationFrame(frame);
-})();
