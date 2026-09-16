@@ -14,7 +14,7 @@ import { initFire } from "./fire.js";
 import { initLifprasirTree, PALETTE_GREEN } from "./lifprasir/tree.js";
 
 // the tree in the middle of the table — the embryo from the old hero, dyed green: the living tree the feast protects
-initLifprasirTree(document.getElementById("tree"), { palette: PALETTE_GREEN, cameraY: 5.0, cameraZ: 19, lookY: 4.6 });
+initLifprasirTree(document.getElementById("tree"), { palette: PALETTE_GREEN, cameraY: 5.75, cameraZ: 19, lookY: 5.4 });
 
 // Ragnarök — the whole hall burns; the season's accent from seasons.json, the eyebrow already says it
 fetch("/story/seasons.json").then((r) => (r.ok ? r.json() : null)).catch(() => null).then((seasons) => {
