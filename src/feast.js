@@ -51,6 +51,7 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 // --- the sidebar: responsive, the Bragarfull first --------------------------------
 // What is WIP stays not directly reachable: the wip entries show only with ?wip on the
 // URL (the dummit experiment carries it; main's landing does not).
+if (new URLSearchParams(location.search).has("og")) document.body.classList.add("og");   // the card: the hall alone, no chrome (used to render the Open Graph image)
 if (new URLSearchParams(location.search).has("wip")) document.querySelectorAll("[data-wip]").forEach((el) => { el.hidden = false; });
 const burger = document.getElementById("burger"), scrim = document.getElementById("scrim");
 function nav(open) {
