@@ -11,7 +11,7 @@
 }
 html{color-scheme:dark}
 [hidden]{display:none!important}
-body{margin:0;background:var(--night);position:relative;color:var(--bone);font-family:var(--body);font-size:18px;line-height:1.5;overflow-x:hidden}
+body{margin:0;background:var(--night);position:relative;min-height:100svh;display:flex;flex-direction:column;color:var(--bone);font-family:var(--body);font-size:18px;line-height:1.5;overflow-x:hidden}
 
 /* --- Ragnarök: the whole background burns (src/fire.js — a fullscreen fbm shader) ---- */
 .ragnarok{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -36,10 +36,10 @@ body{margin:0;background:var(--night);position:relative;color:var(--bone);font-f
 .side-link.soon:hover{background:none}
 .scrim{position:fixed;inset:0;z-index:25;background:rgba(18,15,43,.6);backdrop-filter:blur(2px)}
 
-main.hall{max-width:1180px;margin:0 auto;padding:0 18px 24px;padding-left:calc(218px + 3vw)}
+main.hall{width:100%;box-sizing:border-box;max-width:1180px;margin:0 auto;padding:0 18px clamp(52px,9.5vw,108px);padding-left:calc(218px + 3vw);flex:1}   /* the bottom seats hang below the table's box — give them the room */
 @media (min-width:1650px){main.hall{padding-left:18px}}
 
-footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:auto;
   padding:18px;margin-left:218px;border-top:1px solid rgba(217,164,65,.22);color:var(--bone-dim);background:rgba(18,15,43,.55)}
 .copyright-text{margin:0;font-size:14px}
 .external-links{color:var(--bone-dim);display:inline-flex}
@@ -51,7 +51,7 @@ footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:1
   .burger{display:block}
   .sidebar{transform:translateX(-100%);transition:transform .3s ease;width:min(78vw,280px)}
   body.nav-open .sidebar{transform:none}
-  main.hall{padding-left:18px}
+  main.hall{padding-left:18px;padding-bottom:clamp(60px,14vw,108px)}
   footer.locki-footer{margin-left:0}
 }
 
