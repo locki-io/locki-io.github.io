@@ -20,7 +20,9 @@ const frag = /* glsl */ `
   uniform vec2 uRes;
   uniform vec3 uSeason;   // the season's accent (Ragnarök: #c1121f)
   uniform vec3 uEmber;    // #e05d0e
-  uniform vec3 uMead;     // #d9a441 — the hottest tongue
+  uniform vec3 uMead;     // #d9a441 — the hot tongue
+  uniform vec3 uOrange;   // #ff8c1a — the heart of the flame
+  uniform vec3 uYellow;   // #ffe066 — the hottest point, where the tongue is born
   uniform vec3 uNight;    // #120f2b — the hall behind the fire
   uniform float uHeat;    // 0..1 — how high the flames climb
 
@@ -57,7 +59,11 @@ const frag = /* glsl */ `
     vec3 col = uNight;
     col = mix(col, uSeason, smoothstep(0.02, 0.35, flame));
     col = mix(col, uEmber,  smoothstep(0.35, 0.68, flame));
-    col = mix(col, uMead,   smoothstep(0.72, 1.0, flame) * 0.85);
+    col = mix(col, uMead,   smoothstep(0.62, 0.82, flame));
+    // inside the tongue: a gradient orange → yellow, hottest low and central where the flame is born
+    float core = smoothstep(0.78, 1.0, flame) * (1.0 - uv.y * 0.6);
+    col = mix(col, uOrange, core);
+    col = mix(col, uYellow, smoothstep(0.55, 1.0, core) * 0.9);
 
     // a low glow at the foot so the fire has ground, and the hall stays night above
     float glow = (1.0 - uv.y) * 0.18 * (0.6 + 0.4 * n);
@@ -77,7 +83,7 @@ export function initFire(canvas, { season = '#c1121f', heat = 0.95 } = {}) {
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const uniforms = {
     uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) },
-    uSeason: { value: hex(season) }, uEmber: { value: hex('#e05d0e') }, uMead: { value: hex('#d9a441') }, uNight: { value: hex('#120f2b') },
+    uSeason: { value: hex(season) }, uEmber: { value: hex('#e05d0e') }, uMead: { value: hex('#d9a441') }, uOrange: { value: hex('#ff8c1a') }, uYellow: { value: hex('#ffe066') }, uNight: { value: hex('#120f2b') },
     uHeat: { value: heat },
   };
   scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms, depthTest: false, depthWrite: false })));
