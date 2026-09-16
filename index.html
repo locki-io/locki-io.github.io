@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <link rel="stylesheet" href="/src/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Locki - AI Agent Architectures</title>
+    <title>The Vaeþir — the build</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Sans+Runic&display=swap" />
+    <link rel="stylesheet" href="/src/feast.css" />
     <!-- Google tag (gtag.js) -->
     <script
       async
@@ -22,215 +23,59 @@
     </script>
   </head>
   <body>
-    <section class="intro-section" id="section1">
-      <!-- Lífþrasir, the Red Thread — fractal-tree backdrop -->
-      <div id="lifprasir-canvas" class="lifprasir-bg" aria-hidden="true"></div>
-      <div class="header-container">
-        <div class="logo-container">
-          <img class="logo-content" src="./public/assets/pLogo_white.png" />
+    <canvas class="ragnarok" id="ragnarok" aria-hidden="true"></canvas>
+    <!-- the site chrome preserved: logo · a responsive sidebar · the footer -->
+    <header class="site-top">
+      <button class="burger" id="burger" aria-label="Open the menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <div class="logo-container">
+        <img class="logo-content" src="./public/assets/pLogo_white.png" alt="Locki" />
+      </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar" aria-label="The realm">
+      <p class="side-eyebrow">the realm</p>
+      <a class="side-link active" href="/" aria-current="page">🍻 The Bragarfull</a>
+      <a class="side-link" href="/void.html">Act 0 · void → 0</a>
+      <a class="side-link" href="/seed.html">Act I · the seed</a>
+      <a class="side-link" href="/roots.html?wip" data-wip hidden>Act II · the roots <small>wip</small></a>
+      <a class="side-link" href="/logo.html?wip" data-wip hidden>the lab · O C <small>wip</small></a>
+      <span class="side-link soon" data-wip hidden aria-disabled="true">Yggdrasil <small>soon</small></span>
+      <p class="side-eyebrow">outside</p>
+      <a class="side-link" href="https://docs.locki.io">docs.locki.io</a>
+      <a class="side-link" href="https://github.com/locki-io/locki-io.github.io">GitHub</a>
+    </nav>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <main class="hall">
+      <header class="hall-head">
+        <div>
+          <p class="eyebrow">Season · Ragnarök 🔥 — the fire tests the house</p>
+          <h1>The Vaeþir <span class="build">(the build)</span></h1>
+          <p class="motto">You mint — lucky you.</p>
         </div>
-        <!-- <div class="action-container">
-          <a class="action-links" disabled href="https://app.locki.io"
-            >Locki Dapp</a
-          >
-          <a
-            class="action-links"
-            href="https://stratej.notion.site/Public-71958c2a94794aa5aa097c798f86d80a?pvs=4"
-            >About Us</a
-          >
-        </div> -->
-        <!-- Decorative circles wrapper -->
-        <div class="circles-wrapper">
-          <!-- Achievement badges positioned within circles -->
-          <div class="circle1">
-            <div class="icon-circle">
-              <img src="./public/assets/achivement2.svg" />
-            </div>
-            <p class="icon-circle-text">2023</p>
-            <p class="icon-circle-text">MultiversX Hackathon</p>
-            <p class="icon-circle-text">(AI bounty track)</p>
-          </div>
+        <button class="skal" id="skal" type="button">Skál!</button>
+      </header>
 
-          <div class="circle2">
-            <div class="icon-circle">
-              <img src="./public/assets/achivement1.svg" />
-            </div>
-            <p class="icon-circle-text">2024</p>
-            <p class="icon-circle-text">Itheum xPand Program</p>
-          </div>
+      <div class="table" id="table">
+        <div class="world" aria-hidden="true"></div>
+        <div class="tree" id="tree" aria-hidden="true"></div>
+        <svg class="thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="47" ry="46" pathLength="100"/></svg>
+        <div class="caption" id="caption" aria-live="polite"><span class="cheer" id="cheer">Skál!</span><div id="cardbody"><b>Lífþrasir</b><h2>I am Red Threaaaasd</h2><span class="sub">not a face — the table, and the red thread through every seat</span></div></div>
+        <!-- seats are placed by script on an ellipse -->
+      </div>
 
-          <div class="circle3">
-            <div class="icon-circle">
-              <img
-                src="./public/assets/build_white.svg"
-                width="56px"
-                height="56px"
-              />
-              <p class="icon-circle-text">2025</p>
-              <p class="icon-circle-text">Valkyria</p>
-            </div>
-          </div>
-
-          <div class="circle4">
-            <div class="icon-circle">
-              <img
-                src="./public/assets/build_white.svg"
-                width="56px"
-                height="56px"
-              />
-              <p class="icon-circle-text">2025</p>
-              <p class="icon-circle-text">Dafalix</p>
-            </div>
-          </div>
-          <div class="circle5">
-            <div class="icon-circle">
-              <img
-                src="./public/assets/build_white.svg"
-                width="56px"
-                height="56px"
-              />
-            </div>
-            <p class="icon-circle-text">2026</p>
-            <a
-              href="https://www.encodeclub.com/my-programmes/comet-resolution-v2-hackathon"
-              class="icon-circle-text"
-              >Encode Hackathon- Agent AI</a
-            >
-          </div>
+      <div class="portal" id="portal" hidden role="dialog" aria-modal="true" aria-labelledby="plate-name">
+        <div class="frame" id="frame">
+          <img id="portrait" src="" alt="" />
+          <div class="rune-full" id="rune-full" hidden></div>
+          <div class="plate"><b id="plate-kind"></b><h2 id="plate-name"></h2><p id="plate-trait"></p></div>
+          <button type="button" class="close" id="close" aria-label="Close">×</button>
+          <button type="button" class="prev" id="prev" aria-label="Previous seat">‹</button>
+          <button type="button" class="next" id="next" aria-label="Next seat">›</button>
         </div>
       </div>
-      <div class="intro-section-content">
-        <p class="intro-content">
-          Deploying intelligent AI agent architectures for civic tech and
-          multipurpose applications. From participatory democracy to creative
-          assistance, our Vaettir orchestration brings specialized AI guardians
-          to serve communities and creators.
-        </p>
-        <div class="btn-container">
-          <a
-            class="btn"
-            href="https://github.com/orgs/locki-io/repositories"
-            target="_blank"
-            ><p class="btn-text">View Projects</p></a
-          >
-          <!-- <a
-            class="btn"
-            href="https://stratej.notion.site/Public-71958c2a94794aa5aa097c798f86d80a?pvs=4"
-            target="_blank"
-            ><p class="btn-text" >Documentation</p></a
-          > -->
-        </div>
-      </div>
-      <div class="scroll-container" onclick="smoothScrollToValue()">
-        <div class="scroll-circle">
-          <img src="./public/assets/scroll.svg" />
-        </div>
-        <p class="scroll-text">Scroll Down</p>
-      </div>
-    </section>
+    </main>
 
-    <section class="values-section" id="section2">
-      <div class="values-container">
-        <h1 class="values-section-header">AI AGENT PORTFOLIO</h1>
-        <p class="values-section-subtitle">
-          Vaettir Orchestration: Specialized AI guardians serving communities
-          and creators
-        </p>
-        <div class="values-card-container">
-          <div class="values-card">
-            <img src="./public/assets/ocapistaine-icon.png" />
-            <p class="card-text-1">O Capistaine</p>
-            <p class="card-text-2">
-              Creative agent for participatory democracy - awakens and amplifies
-              citizen voices with warmth and inspiration for the Audierne2026
-              civic platform
-            </p>
-          </div>
-
-          <div class="values-card">
-            <img src="./public/assets/forseti-icon.png" />
-            <p class="card-text-1">Forseti 461</p>
-            <p class="card-text-2">
-              Guardrail and moderation agent - impartial guardian of truth
-              ensuring respectful, constructive civic dialogue with Norse
-              justice wisdom
-            </p>
-          </div>
-
-          <div class="values-card">
-            <img src="./public/assets/valkyria-icon.png" />
-            <p class="card-text-1">Valkyria Lokidatter</p>
-            <p class="card-text-2">
-              Playful oracle agent - Loki's enchanting sister bringing
-              predictions, entertainment and Norse charm to interactive
-              experiences
-            </p>
-          </div>
-
-          <div class="values-card">
-            <img src="./public/assets/locki-companion-icon.png" />
-            <p class="card-text-1">Locki Companion</p>
-            <p class="card-text-2">
-              Legacy 3D construction master - Python and ComfyUI virtuoso,
-              dormant for now but ready to empower creators with visual
-              generation tools
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="teams-section" id="section3">
-      <div class="teams-container">
-        <h1 class="teams-section-header">CONTRIBUTORS</h1>
-        <p class="teams-section-subtitle">
-          Building participatory democracy tools for civic engagement
-        </p>
-        <div class="teams-card-container">
-          <div class="teams-card">
-            <img src="./public/assets/johny.png" />
-            <p class="card-text-1">Team Member 1</p>
-            <p class="card-text-2">Role and description coming soon</p>
-          </div>
-
-          <div class="teams-card">
-            <img src="./public/assets/team-member-2.png" />
-            <p class="card-text-1">Team Member 2</p>
-            <p class="card-text-2">Role and description coming soon</p>
-          </div>
-
-          <div class="teams-card">
-            <img src="./public/assets/team-member-2.png" />
-            <p class="card-text-1">Team Member 3</p>
-            <p class="card-text-2">Role and description coming soon</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="teams-section" id="section4">
-      <div class="teams-container">
-        <h1 class="teams-section-header">PREVIOUS CONTRIBUTORS</h1>
-        <p class="teams-section-subtitle">
-          Locki3D construction and AI orchestration pioneers
-        </p>
-        <div class="teams-card-container">
-          <div class="teams-card">
-            <img src="./public/assets/satish.png" />
-            <p class="card-text-1">satish</p>
-          </div>
-
-          <div class="teams-card">
-            <img src="./public/assets/calin.png" />
-            <p class="card-text-1">Calin</p>
-          </div>
-
-          <div class="teams-card">
-            <img src="./public/assets/max.png" />
-            <p class="card-text-1">Max</p>
-          </div>
-        </div>
-      </div>
-    </section>
     <footer class="locki-footer">
       <p class="copyright-text">
         © 2026 Locki - AI Agent Architectures for Common Good
@@ -275,6 +120,7 @@
         </svg>
       </a>
     </footer>
-    <script type="module" src="/src/main.js"></script>
+
+    <script type="module" src="/src/feast.js"></script>
   </body>
 </html>
