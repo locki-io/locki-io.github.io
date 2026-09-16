@@ -137,3 +137,13 @@ button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
   .frame{animation:none}
   .thread ellipse{animation:none;stroke-dashoffset:0}
 }
+
+/* the Open Graph view — ?og: the hall alone at 1200×630, for the card */
+body.og .sidebar,body.og .site-top,body.og footer.locki-footer,body.og .burger,body.og .scrim{display:none}
+body.og main.hall{padding:0;max-width:none;display:grid;place-items:center;min-height:100svh}
+body.og .hall-head{position:absolute;left:28px;top:18px;margin:0;z-index:4}
+body.og .hall-head .skal{display:none}
+body.og .table{width:min(92vh, 92vw);margin:0}
+body.og .seat{--w:66px} body.og .name{font-size:10px}
+body.og .caption{font-size:14px} body.og .caption h2{font-size:19px} body.og .caption .cheer{font-size:22px}
+body.og h1{font-size:34px} body.og .eyebrow{font-size:11px}
