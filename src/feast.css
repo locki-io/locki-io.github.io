@@ -60,9 +60,8 @@ footer.locki-footer{display:flex;align-items:center;justify-content:center;gap:1
 h1{text-shadow:0 2px 18px rgba(0,0,0,.85);font-family:var(--display);font-weight:700;font-size:clamp(28px,4.2vw,46px);letter-spacing:.06em;margin:0;color:var(--mead);text-wrap:balance}
 h1 .build{font-weight:500;font-size:.45em;letter-spacing:.18em;color:var(--bone-dim);text-transform:uppercase}
 .eyebrow{font-family:var(--display);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--season);margin:0 0 4px}
-.motto{margin:4px 0 0;font-style:italic;font-size:19px;color:var(--bone);text-shadow:0 1px 10px rgba(0,0,0,.9)}
 .eyebrow{text-shadow:0 1px 10px rgba(0,0,0,.9)}
-button.skal{font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--night);background:var(--mead);border:0;border-radius:999px;padding:10px 22px;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 6px 24px rgba(217,164,65,.25)}
+button.skal{display:grid;line-height:1.25;text-align:center;font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--night);background:var(--mead);border:0;border-radius:999px;padding:10px 26px;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 6px 24px rgba(217,164,65,.25)}
 button.skal:hover{background:#e8b657}
 button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
 
