@@ -49,6 +49,9 @@ const FACE_DIR = "/assets/vaettir/";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // --- the sidebar: responsive, the Bragarfull first --------------------------------
+// What is WIP stays not directly reachable: the wip entries show only with ?wip on the
+// URL (the dummit experiment carries it; main's landing does not).
+if (new URLSearchParams(location.search).has("wip")) document.querySelectorAll("[data-wip]").forEach((el) => { el.hidden = false; });
 const burger = document.getElementById("burger"), scrim = document.getElementById("scrim");
 function nav(open) {
   document.body.classList.toggle("nav-open", open);
