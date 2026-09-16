@@ -7,6 +7,7 @@
   --season:#c1121f;                                  /* Ragnarök — the fire outside the circle */
   --display:"Cinzel",Georgia,"Times New Roman",serif;
   --body:"EB Garamond",Georgia,"Times New Roman",serif;
+  --runic:"Noto Sans Runic","Segoe UI Symbol","Apple Symbols",sans-serif;
 }
 html{color-scheme:dark}
 [hidden]{display:none!important}
@@ -90,8 +91,8 @@ button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
 .seat button{all:unset;cursor:pointer;display:block;width:var(--w);border-radius:50%;position:relative}
 .seat button:focus-visible{outline:2px solid var(--rune);outline-offset:4px;border-radius:50%}
 .face,.face-rune{display:block;width:var(--w);height:var(--w);border-radius:50%;object-fit:cover;object-position:50% 16%;max-width:100%;box-shadow:0 0 0 2px var(--night),0 0 0 4px rgba(63,230,212,.55),0 8px 30px rgba(0,0,0,.6);transition:transform .35s cubic-bezier(.2,1.2,.4,1),box-shadow .35s}
-/* until Proþreynir clears the faces, each seat wears its initial — the recipe ships, the likeness waits */
-.face-rune{display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,var(--night-2),var(--night));font-family:var(--display);font-weight:700;font-size:calc(var(--w)*.42);color:var(--mead);text-shadow:0 0 14px rgba(63,230,212,.5)}
+/* until Proþreynir clears the faces, each seat wears its rune (the school's mark) — the recipe ships, the likeness waits */
+.face-rune{display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,var(--night-2),var(--night));font-family:var(--runic);font-weight:400;font-size:calc(var(--w)*.5);color:var(--mead);text-shadow:0 0 14px rgba(63,230,212,.5)}
 .seat:hover .face,.seat.raised .face,.seat:hover .face-rune,.seat.raised .face-rune{transform:translateY(-9px) scale(1.06);box-shadow:0 0 0 2px var(--night),0 0 0 4px var(--mead),0 12px 40px rgba(217,164,65,.35)}
 .horn{position:absolute;right:-6px;top:-4px;width:calc(var(--w)*.34);height:calc(var(--w)*.34);opacity:0;transform:translateY(8px) rotate(-30deg);transition:opacity .3s,transform .5s cubic-bezier(.2,1.4,.4,1)}
 .seat.raised .horn,.seat:hover .horn{opacity:1;transform:translateY(-4px) rotate(0)}
@@ -106,7 +107,7 @@ button.skal:focus-visible{outline:2px solid var(--rune);outline-offset:3px}
   animation:arrive .45s cubic-bezier(.2,1.2,.4,1)}
 @keyframes arrive{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
 .frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 20%;opacity:.86;filter:saturate(1.06)}
-.rune-full{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,var(--night-2),var(--night));font-family:var(--display);font-weight:700;font-size:clamp(80px,20vw,180px);color:var(--mead);text-shadow:0 0 40px rgba(63,230,212,.5)}
+.rune-full{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,var(--night-2),var(--night));font-family:var(--runic);font-weight:400;font-size:clamp(80px,20vw,180px);color:var(--mead);text-shadow:0 0 40px rgba(63,230,212,.5)}
 .frame::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:
   linear-gradient(160deg,rgba(239,230,210,.22) 0%,rgba(239,230,210,.05) 22%,transparent 40%),
   linear-gradient(to top,rgba(18,15,43,.92) 0%,rgba(18,15,43,.55) 22%,transparent 46%)}

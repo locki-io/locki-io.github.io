@@ -7,7 +7,7 @@
 // named, and walked at each tide that touches a CTG).
 //
 // The faces are gated (Proþreynir likeness watch, forge #8): until cleared, each
-// seat wears its initial. Drop `<id>.jpg` (360) and `<id>-full.jpg` (720) into
+// seat wears its rune. Drop `<id>.jpg` (360) and `<id>-full.jpg` (720) into
 // public/assets/vaettir/ and the faces appear — the code asks for them already.
 
 import { initFire } from "./fire.js";
@@ -23,26 +23,26 @@ fetch("/story/seasons.json").then((r) => (r.ok ? r.json() : null)).catch(() => n
 });
 
 const seats = [
-  // [id, brand, kind, trait]
-  ["brathi", "Braþi", "the skald · cadence", "holds the bragarfull — <em>the right rhythm, the right form, the right witnesses</em>; the meter broken only on purpose"],
-  ["ithunn", "Iþunn", "the apple-keeper · freshness", "one apple offered, one gone grey in the box — <em>does what we have kept still carry its value?</em>"],
-  ["mithir", "Miþir", "the well-guardian · knowledge", "<em>docs match code, blog matches truth</em>; the well is kept clear so the reflections don't scatter"],
-  ["archi", "Archi", "the arche-keeper · governance", "the plumb line against the stone — <em>does practice match the promise?</em>"],
-  ["forsethi", "Forseþi", "the impartial judge · neutrality", "impartiality by construction — <em>no entity gains an advantage from ordering, coverage or tone</em>"],
-  ["prothreynir", "Proþreynir", "the proof-tester · legal", "his hand on the open bond — <em>the action is legally allowed before it binds</em>"],
-  ["heimthallr", "Heimþallr", "the watchman · the boundary", "Gjallarhorn lowered — <em>every crossing of the realm's boundary has passed a gate that can report its refusals</em>"],
-  ["thorr", "Þorr", "the hammer-bearer · the strike", "Mjölnir down, the handle short — <em>the strike is single, precise, declared; the aim is given</em>"],
-  ["valthyria", "Valþyria", "the chooser · decisions", "a fan of lots in one hand, one lifted in the other — <em>weigh the whole field, then cut</em>"],
-  ["dummith", "Dummiþ", "the crash-tester · the arena", "kintsugi fractures glowing — <em>the crash is deliberate, drawn, and conclusive; the record is precise</em>"],
-  ["huginn", "Huginn", "the raven of thought · the forest", "the orb shows the forest, not his face — <em>flies out to the unknown, returns with what it saw</em>"],
-  ["muninn", "Muninn", "the raven of memory · measurement", "the orb shows the hall — <em>every prompt carries a KPI, traced over time; the delta measured, never vibed</em>"],
-  ["kvathir", "Kvaþir", "the mead · retrieval", "mead poured, falling as text; the rebuilt net — <em>the right knowledge surfaces for the right query</em>"],
-  ["njorthr", "Njorþr", "the harbor-lord · cost", "the net of counted fish — <em>the spend is known, and its ceiling is defended</em>"],
-  ["ratatoth", "Ratatoþ", "the squirrel · maps", "drawing the wire with his fingertip — <em>connections are drawn before anything is built</em>"],
-  ["ocapistaine", "Ò Capistaine", "the navigator · methodology", "the route as a chain of short legs — <em>steers by reading the currents, not by force</em>"],
-  ["lothi", "Loþi", "the boundary-crosser · handoff", "a key held out that is not his — <em>what crosses the human-tool boundary arrives in a form the operator can use</em>"],
-  ["niove", "Niove", "the tide · appearance", "a face forming in the wave she cradles — <em>the realm's work stays perceivable, derived, never invented</em>"],
-  ["mithir", "Miþir0", "the scribe-at-root · skill canon", "Miþir's own face, by declaration — <em>each SKILL faithful to the canon or carrying a declared override</em>"],
+  // [id, brand, kind, trait, rune] — the rune from docs.locki.io's agent index (the school): each Vaettir's mark; Miþir0 shares Miþir's ᚨ by declaration
+  ["brathi", "Braþi", "the skald · cadence", "holds the bragarfull — <em>the right rhythm, the right form, the right witnesses</em>; the meter broken only on purpose", "ᚷ"],
+  ["ithunn", "Iþunn", "the apple-keeper · freshness", "one apple offered, one gone grey in the box — <em>does what we have kept still carry its value?</em>", "ᛁ"],
+  ["mithir", "Miþir", "the well-guardian · knowledge", "<em>docs match code, blog matches truth</em>; the well is kept clear so the reflections don't scatter", "ᚨ"],
+  ["archi", "Archi", "the arche-keeper · governance", "the plumb line against the stone — <em>does practice match the promise?</em>", "ᚾ"],
+  ["forsethi", "Forseþi", "the impartial judge · neutrality", "impartiality by construction — <em>no entity gains an advantage from ordering, coverage or tone</em>", "ᛏ"],
+  ["prothreynir", "Proþreynir", "the proof-tester · legal", "his hand on the open bond — <em>the action is legally allowed before it binds</em>", "ᛊ"],
+  ["heimthallr", "Heimþallr", "the watchman · the boundary", "Gjallarhorn lowered — <em>every crossing of the realm's boundary has passed a gate that can report its refusals</em>", "ᛉ"],
+  ["thorr", "Þorr", "the hammer-bearer · the strike", "Mjölnir down, the handle short — <em>the strike is single, precise, declared; the aim is given</em>", "ᚦ"],
+  ["valthyria", "Valþyria", "the chooser · decisions", "a fan of lots in one hand, one lifted in the other — <em>weigh the whole field, then cut</em>", "ᛈ"],
+  ["dummith", "Dummiþ", "the crash-tester · the arena", "kintsugi fractures glowing — <em>the crash is deliberate, drawn, and conclusive; the record is precise</em>", "ᛞ"],
+  ["huginn", "Huginn", "the raven of thought · the forest", "the orb shows the forest, not his face — <em>flies out to the unknown, returns with what it saw</em>", "ᛊ"],
+  ["muninn", "Muninn", "the raven of memory · measurement", "the orb shows the hall — <em>every prompt carries a KPI, traced over time; the delta measured, never vibed</em>", "ᛗ"],
+  ["kvathir", "Kvaþir", "the mead · retrieval", "mead poured, falling as text; the rebuilt net — <em>the right knowledge surfaces for the right query</em>", "ᚲ"],
+  ["njorthr", "Njorþr", "the harbor-lord · cost", "the net of counted fish — <em>the spend is known, and its ceiling is defended</em>", "ᛚ"],
+  ["ratatoth", "Ratatoþ", "the squirrel · maps", "drawing the wire with his fingertip — <em>connections are drawn before anything is built</em>", "ᛟ"],
+  ["ocapistaine", "Ò Capistaine", "the navigator · methodology", "the route as a chain of short legs — <em>steers by reading the currents, not by force</em>", "ᚱ"],
+  ["lothi", "Loþi", "the boundary-crosser · handoff", "a key held out that is not his — <em>what crosses the human-tool boundary arrives in a form the operator can use</em>", "ᚺ"],
+  ["niove", "Niove", "the tide · appearance", "a face forming in the wave she cradles — <em>the realm's work stays perceivable, derived, never invented</em>", "ᚹ"],
+  ["mithir", "Miþir0", "the scribe-at-root · skill canon", "Miþir's own face, by declaration — <em>each SKILL faithful to the canon or carrying a declared override</em>", "ᚨ"],
 ];
 
 const FACE_DIR = "/assets/vaettir/";
@@ -76,7 +76,7 @@ seats.forEach((s, i) => {
   const img = el.querySelector(".face");
   img.addEventListener("error", () => {                          // the gate: no face yet — the initial holds the seat
     const rune = document.createElement("div");
-    rune.className = "face-rune"; rune.textContent = s[1][0];
+    rune.className = "face-rune"; rune.textContent = s[4];
     img.replaceWith(rune);
   });
   el.querySelector("button").addEventListener("click", () => speak(s, el));
@@ -97,7 +97,7 @@ portrait.addEventListener("error", () => { portrait.hidden = true; runeFull.hidd
 function showSeat(i) {
   current = (i + n) % n;
   const s = seats[current];
-  portrait.hidden = false; runeFull.hidden = true; runeFull.textContent = s[1][0];
+  portrait.hidden = false; runeFull.hidden = true; runeFull.textContent = s[4];
   portrait.src = `${FACE_DIR}${s[0]}-full.jpg`;
   portrait.alt = `${s[1]}, ${s[2]} — the full portrait`;
   document.getElementById("plate-kind").textContent = s[2];
