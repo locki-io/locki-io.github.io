@@ -12,12 +12,12 @@
 //   set -a; source /Users/jnxmas/dev/locki-io.github.io/.env.platforms; set +a
 //   node scripts/grow-seed-pulse.mjs
 //
-// A missing GITHUB_PAT_TOKEN stops the script — it never hunts for another.
+// A missing LOCKIIO_GITHUB_PAT_TOKEN stops the script — it never hunts for another.
 
 import { writeFileSync, mkdirSync } from 'node:fs';
 
-const TOKEN = process.env.GITHUB_PAT_TOKEN;
-if (!TOKEN) { console.error('GITHUB_PAT_TOKEN missing — STOP'); process.exit(1); }
+const TOKEN = process.env.LOCKIIO_GITHUB_PAT_TOKEN;
+if (!TOKEN) { console.error('LOCKIIO_GITHUB_PAT_TOKEN missing — STOP'); process.exit(1); }
 const SEASON = { from: '2023-09-01', to: '2024-04-30' };
 const H = { Authorization: `Bearer ${TOKEN}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
 

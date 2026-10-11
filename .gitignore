@@ -37,3 +37,7 @@ PRIVATE_*
 /locki
 # project/ — internal governance; gitignored on PUBLIC repos (root law)
 project/
+
+# the Forseti key inventory: per host, never committed (it holds the last 4 chars of every secret)
+.forsethi/
+.forseti/

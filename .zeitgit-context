@@ -16,7 +16,7 @@ deploy_origin:
   type: github
   url: https://github.com/locki-io/locki-io.github.io
   serves: https://www.locki.io
-  api_auth_env: GITHUB_PAT_TOKEN
+  api_auth_env: LOCKIIO_GITHUB_PAT_TOKEN
   visibility: public
 born: 2023-09-18
 last-session: 2026-08-29
