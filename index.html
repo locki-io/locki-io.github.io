@@ -126,6 +126,90 @@
         </div>
       </section>
 
+      <section class="band" id="deliberation">
+        <p class="eyebrow"><span lang="fr">Ò Capistaine · bêta</span><span lang="en">Ò Capistaine · beta</span></p>
+        <h2><span lang="fr">De la délibération au citoyen</span><span lang="en">From the deliberation to the resident</span></h2>
+        <p class="lead narrow"><span lang="fr">Les actes de la commune sont publics, mais pas lisibles : un PDF tamponné, souvent un scan. Nous les rendons structurés — puis lisibles par chacun, selon qui il est.</span><span lang="en">The commune's acts are public, but not readable: a stamped PDF, often a scan. We make them structured — then readable by each person, according to who they are.</span></p>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-n">1</span>
+            <h3><span lang="fr">L'acte publié</span><span lang="en">The published act</span></h3>
+            <p><span lang="fr">197 actes moissonnés sur Megalis, le flux open data breton, chaque fichier vérifié par son empreinte. Sur 205 PDF « texte », 141 ne portent que le tampon de la préfecture sur un scan.</span><span lang="en">197 acts harvested from Megalis, Brittany's open-data feed, every file checked against its fingerprint. Of 205 “text” PDFs, 141 carry only the prefecture's stamp over a scan.</span></p>
+          </li>
+          <li class="step">
+            <span class="step-n">2</span>
+            <h3><span lang="fr">Le texte lu</span><span lang="en">The text read</span></h3>
+            <p><span lang="fr">L'OCR lit le scan, avec le vocabulaire de la commune : Stum, Pierre Le Lec, Brigneoc'h — tels que la commune les écrit.</span><span lang="en">OCR reads the scan, with the commune's own vocabulary: Stum, Pierre Le Lec, Brigneoc'h — as the commune writes them.</span></p>
+          </li>
+          <li class="step">
+            <span class="step-n">3</span>
+            <h3><span lang="fr">La donnée</span><span lang="en">The data</span></h3>
+            <p><span lang="fr">154 délibérations au format national SCDL 2.1.6 : matière, objet, date, votes. Une ligne par décision, réutilisable par tous.</span><span lang="en">154 deliberations in the national SCDL 2.1.6 format: subject, title, date, votes. One row per decision, reusable by anyone.</span></p>
+          </li>
+          <li class="step">
+            <span class="step-n">4</span>
+            <h3><span lang="fr">Les lectures</span><span lang="en">The readings</span></h3>
+            <p><span lang="fr">Un même contenu, plusieurs lectures : chacun déclare qui il est, personne n'est deviné ni suivi.</span><span lang="en">One content, several readings: each person declares who they are; no one is guessed or tracked.</span></p>
+          </li>
+        </ol>
+
+        <div class="example">
+          <div class="example-act">
+            <p class="eyebrow"><span lang="fr">Exemple · une délibération réelle</span><span lang="en">Example · a real deliberation</span></p>
+            <dl class="scdl">
+              <dt>DELIB_ID</dt><dd>DE2026-039</dd>
+              <dt>DELIB_DATE</dt><dd>2026-02-18</dd>
+              <dt>DELIB_MATIERE</dt><dd>1.4 · Commande Publique / Autres types de contrats</dd>
+              <dt>DELIB_OBJET</dt><dd>SDEF : rénovation éclairage public stade d'Esquibien</dd>
+              <dt><span lang="fr">annexe</span><span lang="en">annex</span></dt><dd><span lang="fr">convention de mandat · 17 800 € HT · 21 360 € TTC · 100 % commune · acompte 40 %</span><span lang="en">mandate agreement · €17,800 excl. VAT · €21,360 incl. · 100 % commune · 40 % deposit</span></dd>
+              <dt>VOTE</dt><dd><span lang="fr">non extrait — le corps de l'acte est un scan</span><span lang="en">not extracted — the act's body is a scan</span></dd>
+            </dl>
+            <p class="source"><a href="https://data.megalis.bretagne.bzh/OpenData/200054724/Deliberation/2026/1029367/3f142503100f880aed092f9c74dd833c76a72a7a7e60475d036ca222ff062ff1.pdf"><span lang="fr">L'acte sur Megalis →</span><span lang="en">The act on Megalis →</span></a></p>
+          </div>
+          <div class="readings">
+            <div class="persona-tabs" role="tablist" aria-label="Lectures / Readings">
+              <button role="tab" type="button" aria-selected="true" aria-controls="r-habitant" id="t-habitant"><span lang="fr">Habitant·e</span><span lang="en">Resident</span></button>
+              <button role="tab" type="button" aria-selected="false" aria-controls="r-eleve" id="t-eleve"><span lang="fr">Élève</span><span lang="en">Pupil</span></button>
+              <button role="tab" type="button" aria-selected="false" aria-controls="r-elu" id="t-elu"><span lang="fr">Élu·e</span><span lang="en">Councillor</span></button>
+            </div>
+            <div class="reading" role="tabpanel" id="r-habitant" aria-labelledby="t-habitant">
+              <img class="persona" src="/assets/personas/habitant.png" height="220" alt="" title="une habitante âgée — la persona « habitant·e » du film Ò Capistaine" />
+              <p><span lang="fr">L'éclairage du terrain de foot d'Esquibien va être rénové. La commune en confie les travaux au SDEF et paie la totalité : 21 360 € TTC.</span><span lang="en">The lighting of the Esquibien football pitch will be renovated. The commune hands the works to the SDEF and pays all of it: €21,360 incl. VAT.</span></p>
+            </div>
+            <div class="reading" role="tabpanel" id="r-eleve" aria-labelledby="t-eleve" hidden>
+              <img class="persona" src="/assets/personas/eleve.png" height="220" alt="" title="un élève — la persona « élève » du film Ò Capistaine" />
+              <p><span lang="fr">Le terrain de foot d'Esquibien aura un nouvel éclairage. C'est la commune qui le paie, et le syndicat d'énergie du Finistère qui fait les travaux.</span><span lang="en">The Esquibien football pitch will get new lights. The commune pays for it, and Finistère's energy syndicate does the works.</span></p>
+            </div>
+            <div class="reading" role="tabpanel" id="r-elu" aria-labelledby="t-elu" hidden>
+              <img class="persona" src="/assets/personas/elu.png" height="220" alt="" title="une élue — la persona « élu·e » du film Ò Capistaine" />
+              <p><span lang="fr">Convention de mandat (art. L.2422-5 du Code de la commande publique) avec le SDEF : 17 800 € HT, participation communale 100 % du TTC, financement SDEF 0 €, acompte de 40 % sur bon de commande.</span><span lang="en">Mandate agreement (art. L.2422-5, Public Procurement Code) with the SDEF: €17,800 excl. VAT, commune's share 100 % incl. VAT, SDEF funding €0, 40 % deposit on order.</span></p>
+            </div>
+            <p class="note"><span lang="fr">Lectures d'exemple, rédigées à partir de l'acte et de son annexe : chaque chiffre vient du document. Les personnages sont ceux du film Ò Capistaine. En bêta — au cœur de la démo Solutions4Good.</span><span lang="en">Example readings, written from the act and its annex: every figure comes from the document. The characters are the Ò Capistaine film's own. In beta — at the heart of the Solutions4Good demo.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band alt" id="technique">
+        <p class="eyebrow"><span lang="fr">Notre technique</span><span lang="en">Our technique</span></p>
+        <h2><span lang="fr">Un RAG souverain, frugal en tokens</span><span lang="en">Sovereign RAG, frugal with tokens</span></h2>
+        <p class="lead narrow"><span lang="fr">Les plus grands gains ne viennent pas d'un plus gros modèle, mais de ce qui se passe avant et après la recherche.</span><span lang="en">The biggest gains don't come from a bigger model — they come from what happens before and after the search.</span></p>
+        <div class="cards four">
+          <article class="card small"><h3><span lang="fr">La recherche reste chez nous</span><span lang="en">Search stays home</span></h3><p><span lang="fr">Les vecteurs sont stockés en local : ni clé d'API, ni GPU. 164 documents, 463 extraits, moins de 500 Mo.</span><span lang="en">Vectors are stored locally: no API key, no GPU. 164 documents, 463 chunks, under 500 MB.</span></p></article>
+          <article class="card small"><h3><span lang="fr">Corriger avant de chercher</span><span lang="en">Correct before searching</span></h3><p><span lang="fr">Un appel bref à un petit modèle remet accents et noms bretons en ordre, avant la recherche coûteuse.</span><span lang="en">One short call to a small model fixes accents and Breton names before the costly search.</span></p></article>
+          <article class="card small"><h3><span lang="fr">Les distances, gratuites</span><span lang="en">Distances, for free</span></h3><p><span lang="fr">Chaque recherche renvoie l'écart sémantique de ses résultats : la confiance s'en déduit sans un appel de plus.</span><span lang="en">Every search returns the semantic gap of its results: confidence follows without one more call.</span></p></article>
+          <article class="card small"><h3><span lang="fr">Local d'abord</span><span lang="en">Local first</span></h3><p><span lang="fr">Un modèle local pour la souveraineté, le cloud seulement en secours.</span><span lang="en">A local model for sovereignty, the cloud only as a backup.</span></p></article>
+        </div>
+        <ul class="facts frugal">
+          <li><b><span lang="fr">69 sessions</span><span lang="en">69 sessions</span></b><span lang="fr">de citoyens pendant la campagne, pour moins d'un dollar au total</span><span lang="en">from citizens during the campaign, for less than a dollar in total</span></li>
+          <li><b>10,62 €</b><span lang="fr">TTC pour lire par OCR 4 832 pages d'archives de la commune</span><span lang="en">incl. VAT to read 4,832 pages of the commune's archives by OCR</span></li>
+        </ul>
+        <div class="signal">
+          <span class="beat" aria-hidden="true">ﮩ٨ـﮩﮩ٨ـ♡ﮩ٨ـﮩﮩ٨ـ</span>
+          <p><span lang="fr">Nous comptons les tokens. <strong>Le signal, c'est la chair de poule</strong> — l'effet waouh chez l'humain.</span><span lang="en">We count the tokens. <strong>The signal is goosebumps</strong> — the wow in a human.</span></p>
+        </div>
+        <p><a class="more" href="https://docs.locki.io/blog/enhance-rag-for-cheap"><span lang="fr">Comment nous nettoyons le pare-brise →</span><span lang="en">How we clean the windshield →</span></a></p>
+      </section>
+
       <section class="band" id="realm">
         <p class="eyebrow"><span lang="fr">Le harnais</span><span lang="en">The harness</span></p>
         <h2><span lang="fr">Le realm</span><span lang="en">The realm</span></h2>
