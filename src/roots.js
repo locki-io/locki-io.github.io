@@ -21,9 +21,9 @@ async function start() {
   const beats = (story && story.beats) || [];
   const api = initRoots(stage.scene, {
     seedColor: seasons && seasons.seed ? parseInt(String(seasons.seed).replace('#', ''), 16) : undefined,
-    beats, director, cameraPath: director ? null : cameraPath, onKeyframes: stage.onKeyframes,
+    beats, roots: (story && story.roots) || [], director, cameraPath: director ? null : cameraPath, onKeyframes: stage.onKeyframes,
     startAt: parseFloat(params.get('t') || '0') || 0,
-    onBeat: (b) => { if (b.line) stage.push(b.line, b.cls || ''); if (b.season) stage.setSeason(b.season); [].concat(b.achieve || []).forEach((id) => stage.achieve(id)); },
+    onBeat: (b) => { if (b.clear) stage.clearStream(); if (b.line) stage.push(b.line, b.cls || ''); if (b.season) stage.setSeason(b.season); [].concat(b.achieve || []).forEach((id) => stage.achieve(id)); },
     onMark: () => stage.revealMark(),
     onHold: () => stage.showHold(story && story.hold ? story.hold : { verb: 'join', hint: 'the roots are next · any key, or touch' }),
     onGesture: () => { stage.hideHold(); stage.push((story && story.hold && story.hold.after) || '— the hand is here.', 'door'); },

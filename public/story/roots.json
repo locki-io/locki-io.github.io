@@ -2,28 +2,28 @@
   "act": "II",
   "name": "Act II · the roots — the opening",
   "season": "multiversx",
-  "rule": "every beat a datum; the season line reads seasons.json; the hold names the gesture. The roots — the humans — come next, with source: and consent:. The ledger (element 7) ticks on beats with achieve:; entries from earlier acts arrive already ticked (ticked:).",
+  "rule": "every beat a datum; the season line reads seasons.json; the hold names the gesture. The roots — the humans — come next, with source: and consent:. The ledger (element 7) ticks on beats with achieve:; entries from earlier acts arrive already ticked (ticked:). A beat with clear: turns the page of the stream — a new chapter starts empty.",
   "beats": [
     {
-      "u": 0.0,
+      "u": 0,
       "id": "point",
       "mark": "the point",
       "line": "the point where the thread pierces the ground — at rest, sixty to the minute",
       "cls": "head"
     },
     {
-      "u": 2.0,
+      "u": 2,
       "id": "rise",
       "mark": "from below",
       "line": "from below, grey and white: dew, after the fire — before any season has a colour"
     },
     {
-      "u": 5.0,
+      "u": 5,
       "id": "one",
       "line": "one ring"
     },
     {
-      "u": 8.0,
+      "u": 8,
       "id": "divide",
       "mark": "one → two",
       "line": "one becomes two — Líf, and Lífþrasir: the two who survived inside the tree",
@@ -31,12 +31,12 @@
       "achieve": "divided"
     },
     {
-      "u": 12.0,
+      "u": 12,
       "id": "below",
       "line": "they stay under the ground, and hold it from beneath"
     },
     {
-      "u": 16.0,
+      "u": 16,
       "id": "mark",
       "mark": "the mark",
       "line": "— and in the corner of the frame, recognised: the two rings, the C, the cube that was taken out. The mark.",
@@ -47,9 +47,73 @@
       ]
     },
     {
-      "u": 20.0,
+      "u": 20,
       "id": "hold",
       "mark": "the roots"
+    },
+    {
+      "u": 22,
+      "id": "root-jnxmas",
+      "root": "jnxmas",
+      "line": "jnxmas — “You are part of the adventure anyway.”",
+      "cls": "",
+      "clear": true
+    },
+    {
+      "u": 24.5,
+      "id": "root-satish",
+      "root": "satish",
+      "line": "Satish — “Sorry, I was occupied with lot of work. We can connect this weekend.”",
+      "cls": ""
+    },
+    {
+      "u": 27,
+      "id": "root-max",
+      "root": "max",
+      "line": "Max — “I see most of these organizations as platforms that can connect to an audience of entrepreneurs and decision-makers.”",
+      "cls": ""
+    },
+    {
+      "u": 29.5,
+      "id": "root-calin",
+      "root": "calin",
+      "line": "Calin — the first team",
+      "cls": ""
+    },
+    {
+      "u": 32,
+      "id": "root-sylvain",
+      "root": "sylvain",
+      "line": "Sylvain — the idea",
+      "cls": ""
+    },
+    {
+      "u": 34.5,
+      "id": "root-rashid",
+      "root": "rashid",
+      "line": "Rashid — persistence",
+      "cls": ""
+    },
+    {
+      "u": 37,
+      "id": "root-victor",
+      "root": "victor",
+      "line": "Victor — idealism. His first hackathon: weeks against the OCR wall, then Firecrawl, the crawler that read four thousand municipal documents",
+      "cls": ""
+    },
+    {
+      "u": 39.5,
+      "id": "root-meher",
+      "root": "meher",
+      "line": "Meher — “I trust you!”",
+      "cls": "door"
+    },
+    {
+      "u": 43.5,
+      "id": "undrawn",
+      "mark": "not yet drawn",
+      "line": "— and the roots not yet drawn: the ones who come next",
+      "cls": "head"
     }
   ],
   "hold": {
@@ -63,5 +127,82 @@
   "ticked": [
     "minted",
     "milerock"
-  ]
+  ],
+  "roots": [
+    {
+      "id": "jnxmas",
+      "name": "jnxmas",
+      "joined": "2023-10",
+      "gave": "the thread",
+      "words": "You are part of the adventure anyway.",
+      "source": "locki/blog/2026-03-18-the-seeds-they-left.md",
+      "consent": "the operator’s own words"
+    },
+    {
+      "id": "satish",
+      "name": "Satish",
+      "joined": "2023-10",
+      "gave": "submarine steadiness",
+      "words": "Sorry, I was occupied with lot of work. We can connect this weekend.",
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "invited 2026-08-29 to choose their own line or write on the page — answer pending"
+    },
+    {
+      "id": "max",
+      "name": "Max",
+      "joined": "2023-10",
+      "gave": "strategy",
+      "words": "I see most of these organizations as platforms that can connect to an audience of entrepreneurs and decision-makers.",
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "not yet asked — quoted from a public article on docs.locki.io; the person may request a different line, or none"
+    },
+    {
+      "id": "calin",
+      "name": "Calin",
+      "joined": "2023-10",
+      "gave": "the first team",
+      "words": null,
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "invited 2026-08-29 to choose their own line or write on the page — answer pending"
+    },
+    {
+      "id": "sylvain",
+      "name": "Sylvain",
+      "joined": "2025-12",
+      "joinedNote": "by December 2025 — before audierne2026.fr launched",
+      "gave": "the idea",
+      "words": null,
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "not yet asked — quoted from a public article on docs.locki.io; the person may request a different line, or none"
+    },
+    {
+      "id": "rashid",
+      "name": "Rashid",
+      "joined": "2025-12",
+      "joinedNote": "by December 2025 — before audierne2026.fr launched",
+      "gave": "persistence",
+      "words": null,
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "not yet asked — quoted from a public article on docs.locki.io; the person may request a different line, or none"
+    },
+    {
+      "id": "victor",
+      "name": "Victor",
+      "joined": "2026-01",
+      "gave": "idealism. His first hackathon: weeks against the OCR wall, then Firecrawl, the crawler that read four thousand municipal documents",
+      "words": null,
+      "source": "locki/blog/2026-03-10-red-thread.md · locki/blog/2026-03-18-the-seeds-they-left.md",
+      "consent": "not yet asked — described from public articles on docs.locki.io, no words quoted; the person may request a different line, or none"
+    },
+    {
+      "id": "meher",
+      "name": "Meher",
+      "joined": "2026-01",
+      "gave": "trust — the leaf that fell, and nourishes the roots",
+      "words": "I trust you!",
+      "source": "locki/blog/2026-03-10-red-thread.md",
+      "consent": "not yet asked — quoted from a public article on docs.locki.io; the person may request a different line, or none"
+    }
+  ],
+  "rootsRule": "one root per person, drawn downward from the point; depth = time since they joined (the oldest roots go deepest); thickness is equal — no datum yet measures a person’s thread. A root without words shows only what the article says they gave. Ship gate: Proþreynir/Forsethi0 pass before Act II reaches main."
 }

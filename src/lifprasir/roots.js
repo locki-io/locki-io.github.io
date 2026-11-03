@@ -32,6 +32,7 @@ function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x 
 export function initRoots(container, {
   seedColor = 0x1b2bff,          // the cube keeps the tesseract's blue in every season (seasons.json seed)
   beats = [],                   // [{ u, id, line, cls }] — the act's data: what is said, when
+  roots = [],                   // [{ id, name, joined:'YYYY-MM', words, source, consent }] — the humans (story roots.json)
   director = false, cameraPath = null, onKeyframes,
   onBeat, onHold, onGesture, onMark, onTime, onSeek,
   startAt = 0,
@@ -40,7 +41,7 @@ export function initRoots(container, {
   const T = {};
   beats.forEach((b) => { T[b.id] = b.u; });
   const RISE_START = T.rise ?? 2, RISE_END = T.divide ?? 8, DIVIDE_END = (T.divide ?? 8) + 4, MARK_AT = T.mark ?? 16, HOLD_AT = T.hold ?? 20;
-  const DURATION = HOLD_AT + 2;
+  const DURATION = Math.max(HOLD_AT + 2, ...beats.map((b) => b.u + 3));
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
@@ -105,6 +106,41 @@ export function initRoots(container, {
     cubeGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CUBE * k, CUBE * k, CUBE * k)), edges));
   });
 
+  // --- the roots: the humans, one per person, drawn down from the point ---------------
+  // Depth is a datum: time since they joined — the oldest roots go deepest. Thickness
+  // is equal: nothing measured yet says how much thread a person carried.
+  const ROOT_GROW = 3.2;                                                         // seconds for one root to reach its depth
+  const rootMat = new THREE.MeshStandardMaterial({ color: 0xe8c39a, emissive: 0x8a4a2a, emissiveIntensity: 0.9, roughness: 0.8 });
+  const nowYears = new Date().getFullYear() + new Date().getMonth() / 12;
+  const grown = roots.map((p, i) => {
+    const [yy, mm] = String(p.joined || '').split('-').map(Number);
+    const years = yy ? Math.max(0.25, nowYears - (yy + ((mm || 1) - 1) / 12)) : 0.25;
+    const depth = 0.8 + years * 0.9;
+    const a = i * 2.39996 + 0.4;                                                 // the golden angle: no two roots share a side
+    const spread = 0.9 + depth * 0.45;
+    const pts = [];
+    for (let k = 0; k <= 8; k++) {
+      const s = k / 8, w = 0.35 * Math.sin(s * 5 + i * 1.7) * s;                // a slow wander, deterministic per person
+      const rad = R * 0.2 + spread * Math.pow(s, 0.8);
+      pts.push(new THREE.Vector3(Math.cos(a + w) * rad, FLOOR_Y - 0.02 - depth * Math.pow(s, 1.3), Math.sin(a + w) * rad));
+    }
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const geo = new THREE.TubeGeometry(curve, 96, 0.055, 8, false);
+    { const p3 = geo.attributes.position, c = new THREE.Vector3(), ctr = new THREE.Vector3();   // taper toward the tip
+      for (let v = 0; v < p3.count; v++) { const s = Math.floor(v / 9) / 96; curve.getPointAt(s, ctr);
+        c.fromBufferAttribute(p3, v).sub(ctr).multiplyScalar(1 - 0.75 * s).add(ctr); p3.setXYZ(v, c.x, c.y, c.z); } }
+    const mesh = new THREE.Mesh(geo, rootMat); mesh.visible = false; mesh.userData = p; scene.add(mesh);
+    const beat = beats.find((b) => b.root === p.id);
+    return { mesh, start: beat ? beat.u : HOLD_AT + 2 + i * 2.5, total: geo.index.count };
+  });
+  function growRoots(u) {
+    grown.forEach((g) => {
+      const k = ease(clamp01((u - g.start) / ROOT_GROW));
+      g.mesh.visible = k > 0;
+      g.mesh.geometry.setDrawRange(0, Math.floor(g.total * k / 48) * 48);      // whole rings of the tube only
+    });
+  }
+
   // --- the hold ----------------------------------------------------------------------
   let holding = false, held = false, fired = {}, t0 = null, holdStart = null, holdAccum = 0, marked = false;
   function gesture(e) {
@@ -118,9 +154,10 @@ export function initRoots(container, {
   window.addEventListener('resize', resize);
 
   let START = Math.max(0, +startAt || 0), lastNow = 0;
+  if (START > HOLD_AT) held = true;
   function seek(u) {
     u = Math.max(0, Math.min(DURATION, u));
-    START = u; t0 = lastNow; holdAccum = 0; holding = false; held = false; fired = {}; marked = false;
+    START = u; t0 = lastNow; holdAccum = 0; holding = false; held = u > HOLD_AT; fired = {}; marked = false;   // past the hold: the hand was already given
     window.removeEventListener('keydown', gesture); window.removeEventListener('pointerdown', gesture);
     onSeek && onSeek(u);
   }
@@ -153,6 +190,8 @@ export function initRoots(container, {
     one.scale.setScalar(swell); two.scale.setScalar(swell); cubeGroup.scale.setScalar(swell);
     cubeGroup.position.set(DIST / 2 * div + R * swell, y, 0);                    // the gap's centre, wherever the C stands
     under.intensity = 30 * rise;
+
+    growRoots(u);
 
     if (u >= MARK_AT && !marked) { marked = true; onMark && onMark(); }
 
