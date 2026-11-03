@@ -7,7 +7,7 @@ export default {
   server: { port: 5193, strictPort: true },
   preview: { port: 4173, strictPort: true },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       // multi-page: the homepage, and the Act I stage where the seed is grown
       input: { main: 'index.html', seed: 'seed.html', void: 'void.html', logo: 'logo.html', roots: 'roots.html' },
     },
