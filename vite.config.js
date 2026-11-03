@@ -8,8 +8,8 @@ export default {
   preview: { port: 4173, strictPort: true },
   build: {
     rolldownOptions: {
-      // multi-page: the homepage, and the Act I stage where the seed is grown
-      input: { main: 'index.html', seed: 'seed.html', void: 'void.html', logo: 'logo.html', roots: 'roots.html' },
+      // multi-page: the front (Locki Labs), the history (the feast), and the acts on the stage
+      input: { main: 'index.html', histoire: 'histoire.html', seed: 'seed.html', void: 'void.html', logo: 'logo.html', roots: 'roots.html' },
     },
   },
 };
